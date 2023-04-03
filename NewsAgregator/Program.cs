@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.EntityFrameworkCore;
+using NewsAgregator.Data;
 
 namespace NewsAgregator
 {
@@ -7,7 +9,13 @@ namespace NewsAgregator
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddDbContext<NewsAgreratorContext>(
+                opt =>
+                {
+                    var connString = builder.Configuration
+                        .GetConnectionString("DefaultConnection");
+                    opt.UseSqlServer(connString);
+                });
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
