@@ -1,9 +1,10 @@
 ﻿using Microsoft.Identity.Client;
+using NewsAgregator.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
 namespace NewsAgregator.Data.Eentities
 {
-    public class Source
+    public class Source : IBaseEntity
     {
         [Key]
         public Guid Id { get; set; }

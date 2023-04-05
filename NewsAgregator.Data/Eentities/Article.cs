@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NewsAgregator.Abstractions;
+using System.ComponentModel.DataAnnotations;
 
 namespace NewsAgregator.Data.Eentities
 {
-    public class Article
+    public class Article : IBaseEntity
     {
         [Key]
         public Guid Id { get; set; }
