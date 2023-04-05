@@ -3,16 +3,17 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Core;
 using NewsAgregator.Core.Dto;
+using NewsAgregator.Data;
 using System.Linq.Expressions;
 
 namespace NewsAgregator.Repository.Implemintation
 {
     public class Repository<T> : IRepository<T> where T : class, IBaseEntity
     {
-        private readonly DbContext _db;
+        private readonly NewsAgregatorContext _db;
         private readonly DbSet<T> _dbset;
 
-        public Repository(DbContext db)
+        public Repository(NewsAgregatorContext db)
         {
             _db = db;
             _dbset = _db.Set<T>();
@@ -57,5 +58,7 @@ namespace NewsAgregator.Repository.Implemintation
             _db.Dispose();
             GC.SuppressFinalize(this);
         }
+
+        public async Task<int> CountAsync() => await _dbset.CountAsync();
     }
 }

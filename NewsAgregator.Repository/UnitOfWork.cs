@@ -1,6 +1,6 @@
 ﻿using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Data;
-using NewsAgregator.Data.Eentities;
+using NewsAgregator.Data.Entities;
 
 namespace NewsAgregator.Repository
 {

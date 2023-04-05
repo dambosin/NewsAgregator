@@ -1,4 +1,4 @@
-﻿using NewsAgregator.Data.Eentities;
+﻿using NewsAgregator.Data.Entities;
 
 namespace NewsAgregator.Abstractions.Repository
 {
@@ -9,5 +9,7 @@ namespace NewsAgregator.Abstractions.Repository
         public IRepository<Like> Likes { get; }
         public IRepository<Source> Sources { get; }
         public IRepository<User> Users { get; }
+
+        public Task<int> Commit();
     }
 }

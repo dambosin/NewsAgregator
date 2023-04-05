@@ -1,7 +1,12 @@
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
+using NewsAgregator.Abstractions.Repository;
+using NewsAgregator.Abstractions.Services;
+using NewsAgregator.Buisness;
 using NewsAgregator.Data;
+using NewsAgregator.Data.Entities;
 using NewsAgregator.Repository;
+using NewsAgregator.Repository.Implemintation;
 
 namespace NewsAgregator
 {
@@ -18,7 +23,15 @@ namespace NewsAgregator
                     opt.UseSqlServer(connString);
                 });
 
+            builder.Services.AddScoped<IRepository<Article>, Repository<Article>>();
+            builder.Services.AddScoped<IRepository<Like>, Repository<Like>>();
+            builder.Services.AddScoped<IRepository<Comment>, Repository<Comment>>();
+            builder.Services.AddScoped<IRepository<Source>, Repository<Source>>();
+            builder.Services.AddScoped<IRepository<User>, Repository<User>>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddTransient<IArticleService, AricleSrvice>();
+
+            builder.Services.AddAutoMapper(typeof(Program));
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 

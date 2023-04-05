@@ -1,0 +1,32 @@
+﻿@model NewsAgregator.Mvc.Models.ArticleViewByPageModel;
+
+@{
+    foreach(var article in Model.Articles)
+    {
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">@article.Title</h5>
+                <p class="card-text">@article.ShortDescription</p>
+                <a asp-action="Details" asp-controller="Article" class="btn btn-primary">@article.Id</a>
+            </div>
+        </div>
+    }
+}
+<nav aria-label="...">
+    <ul class="pagination pagination-sm">
+        @for(int i =1; i <= Model.PageInfo.TotalPageCount; i++)
+        {
+            @if (i == Model.PageInfo.PageNumber)
+            {
+                <li class="page-item active" aria-current="page">
+                    <span class="page-link">@i</span>
+                </li>
+            }
+            else
+            {
+                <li class="page-item"><a class="page-link" asp-action="Index" asp-controller="Article" asp-route="@i">@i</a></li>
+            }
+
+        }
+    </ul>
+</nav>

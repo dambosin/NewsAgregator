@@ -1,21 +1,15 @@
-﻿using NewsAgregator.Core;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Xml.Linq;
 
-namespace NewsAgregator.Data.Entities
+namespace NewsAgregator.Core.Dto
 {
-    public class Article : IBaseEntity
+    public class ArticleDto
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid Id { get; set; }
         public string? Title { get; set; }
         public string? ShortDescription { get; set; }
         public string? Content { get; set; }
         public double? PositiveIndex { get; set; }
-        public List<Comment>? Comments { get; set; }
         public Guid SourceId { get; set; }
-        public Source Source { get; set; }
         public DateTime? Created { get; set; }
         public int LikesCount { get; set; }
     }
