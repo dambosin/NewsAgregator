@@ -11,7 +11,7 @@ using NewsAgregator.Data;
 
 namespace NewsAgregator.Data.Migrations
 {
-    [DbContext(typeof(NewsAgreratorContext))]
+    [DbContext(typeof(NewsAgregatorContext))]
     [Migration("20230403203615_init")]
     partial class init
     {

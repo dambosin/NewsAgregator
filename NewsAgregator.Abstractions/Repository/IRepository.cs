@@ -1,16 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+using NewsAgregator.Core;
 using NewsAgregator.Core.Dto;
 using System.Linq.Expressions;
 
-namespace NewsAgregator.Abstractions
+namespace NewsAgregator.Abstractions.Repository
 {
     public interface IRepository<T> : IDisposable where T : class, IBaseEntity
     {
         //read
         Task<T?> GetByIdAsync(Guid id);
         IQueryable<T> FindBy(
-            Expression<Func<T, bool>> predicate, 
-            params Expression<Func<T, Object>>[] includes);
+            Expression<Func<T, bool>> predicate,
+            params Expression<Func<T, object>>[] includes);
         IQueryable<T> GetAsQueryable();
 
         //create

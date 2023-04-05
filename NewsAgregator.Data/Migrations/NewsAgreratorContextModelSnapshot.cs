@@ -10,7 +10,7 @@ using NewsAgregator.Data;
 
 namespace NewsAgregator.Data.Migrations
 {
-    [DbContext(typeof(NewsAgreratorContext))]
+    [DbContext(typeof(NewsAgregatorContext))]
     partial class NewsAgreratorContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

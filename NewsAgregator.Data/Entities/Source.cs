@@ -1,5 +1,4 @@
-﻿using Microsoft.Identity.Client;
-using NewsAgregator.Abstractions;
+﻿using NewsAgregator.Core;
 using System.ComponentModel.DataAnnotations;
 
 namespace NewsAgregator.Data.Eentities
