@@ -1,5 +1,4 @@
-﻿using NewsAgregator.Core;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NewsAgregator.Data.Entities

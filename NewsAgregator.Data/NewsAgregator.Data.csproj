@@ -19,8 +19,4 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NewsAgregator.Core\NewsAgregator.Core.csproj" />
-  </ItemGroup>
-
 </Project>

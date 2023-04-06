@@ -12,6 +12,9 @@ namespace NewsAgregator.Mvc.MapperProfiles
             CreateMap<Article, ArticleDto>();
             CreateMap<ArticleDto, Article>();
             CreateMap<ArticleDto, ArticleModel>();
+            CreateMap<ArticleDto, ArticleDetailModel>();
+            CreateMap<ArticleCreateDto, Article>();
+            CreateMap<ArticleCreateModel, ArticleCreateDto>();
         }
     }
 }

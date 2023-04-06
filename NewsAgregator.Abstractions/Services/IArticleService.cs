@@ -5,7 +5,9 @@ namespace NewsAgregator.Abstractions.Services
     public interface IArticleService
     {
         Task<int> CountAsync();
-        Task<ArticleDto> GetFullArticleAsync(Guid id);
-        Task<IEnumerable<ArticleDto>> GetArticlesByPage(int page, int pageSize);
+        Task<ArticleDto> GetArticleDetailAsync(Guid id);
+        Task<IEnumerable<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize);
+        Task CreateAsync(ArticleCreateDto
+            article);
     }
 }

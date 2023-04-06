@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using NewsAgregator.Core;
 using NewsAgregator.Core.Dto;
+using NewsAgregator.Data.Entities;
 using System.Linq.Expressions;
 
 namespace NewsAgregator.Abstractions.Repository

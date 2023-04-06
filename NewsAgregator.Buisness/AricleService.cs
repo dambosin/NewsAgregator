@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
-using System.Security.AccessControl;
+using NewsAgregator.Data.Entities;
 
 namespace NewsAgregator.Buisness
 {
@@ -21,7 +21,7 @@ namespace NewsAgregator.Buisness
 
         public async Task<int> CountAsync() => await _unitOfWork.Articles.CountAsync();
 
-        public async Task<IEnumerable<ArticleDto>> GetArticlesByPage(int page, int pageSize)
+        public async Task<IEnumerable<ArticleDto>> GetArticlesByPageAsync(int page, int pageSize)
         {
             return await _unitOfWork.Articles
                 .GetAsQueryable()
@@ -32,9 +32,16 @@ namespace NewsAgregator.Buisness
                 .ToListAsync();
         }
 
-        public Task<ArticleDto> GetFullArticleAsync(Guid id)
+        public async Task<ArticleDto> GetArticleDetailAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var article = await _unitOfWork.Articles.GetByIdAsync(id);
+            return _mapper.Map<ArticleDto>(article);
+        }
+
+        public async Task CreateAsync(ArticleCreateDto article)
+        {
+            await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(article));
+            _unitOfWork.Commit();
         }
     }
 }

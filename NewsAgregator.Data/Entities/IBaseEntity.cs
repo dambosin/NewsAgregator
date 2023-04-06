@@ -1,4 +1,4 @@
-﻿namespace NewsAgregator.Core
+﻿namespace NewsAgregator.Data.Entities
 {
     public interface IBaseEntity
     {

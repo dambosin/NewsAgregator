@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using NewsAgregator.Abstractions.Repository;
-using NewsAgregator.Core;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data;
+using NewsAgregator.Data.Entities;
 using System.Linq.Expressions;
 
 namespace NewsAgregator.Repository.Implemintation

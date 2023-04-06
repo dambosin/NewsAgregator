@@ -1,12 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using NewsAgregator.Data.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
-namespace NewsAgregator.Data.Entities
+namespace NewsAgregator.Core.Dto
 {
-    public class Article : IBaseEntity
+    internal class ArticleWithSourceDto
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
         public Guid Id { get; set; }
         public string? Title { get; set; }
         public string? ShortDescription { get; set; }

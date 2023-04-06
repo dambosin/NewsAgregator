@@ -1,21 +1,31 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsAgregator.Abstractions.Services;
+using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models;
+using System.Runtime.CompilerServices;
 
 namespace NewsAgregator.Mvc.Controllers
 {
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
+        private readonly ICommentService _commentService;
+        private readonly ISourceService _sourceSrvice;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
-        public ArticleController(IArticleService articleService, 
+        public ArticleController(
+            IArticleService articleService,
+            ICommentService commentService,
+            ISourceService sourceService,
             IConfiguration configuration, 
             IMapper mapper)
         {
             _articleService = articleService;
+            _commentService = commentService;
+            _sourceSrvice = sourceService;
             _configuration = configuration;
             _mapper = mapper;
         }
@@ -34,7 +44,7 @@ namespace NewsAgregator.Mvc.Controllers
                 };
                 if(pageInfo.PageNumber > pageInfo.TotalPageCount) pageInfo.PageNumber = pageInfo.TotalPageCount;
                 if(pageInfo.PageNumber < 1) pageInfo.PageNumber = 1;
-            var articles = await _articleService.GetArticlesByPage(pageInfo.PageNumber, pageInfo.PageSize);
+            var articles = await _articleService.GetArticlesByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
                 var viewModel = new ArticleViewByPageModel
                 {
                     Articles = articles.Select(article => _mapper.Map<ArticleModel>(article)).ToList(),
@@ -47,6 +57,48 @@ namespace NewsAgregator.Mvc.Controllers
             {
                 return StatusCode(500, new { Message = "Can't read configuration data" });
             }
+        }
+
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            var article = await _articleService.GetArticleDetailAsync(id);
+            var comments = _commentService.GetCommentsByArticleId(article.Id);
+            var viewModel = _mapper.Map<ArticleDetailModel>(article);
+            viewModel.Comments = comments.OrderBy(x => x.Created).ToList();
+            
+            return View(viewModel);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var viewModel = new ArticleCreateModel
+            {
+                AvailiableSources = _sourceSrvice
+                    .GetAvailiableSources()
+                    .Select(source => 
+                        new SelectListItem { 
+                            Value = source.Id.ToString(), 
+                            Text = source.Name })
+                    .ToList()
+            };
+            return View(viewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(ArticleCreateModel article)
+        {
+            if (ModelState.IsValid)
+            {
+                article.Id = Guid.NewGuid();
+                //todo: create positive index calculator
+                article.PositiveIndex = 0;
+                article.Created = DateTime.Now;
+                article.LikesCount = 0;
+                await _articleService.CreateAsync(_mapper.Map<ArticleCreateDto>(article));
+            }
+
+            return RedirectToAction("Detail", new {id = article.Id});
         }
     }
 }
