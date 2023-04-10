@@ -1,5 +1,5 @@
-﻿@model NewsAgregator.Mvc.Models.ArticleViewByPageModel;
-
+﻿@model NewsAgregator.Mvc.Models.Articles.ArticleViewByPageModel;
+<div class="row">
 @{
     foreach(var article in Model.Articles)
     {
@@ -12,6 +12,7 @@
         </div>
     }
 }
+</div>
 <nav aria-label="...">
     <ul class="pagination pagination-sm">
         @for(int i =1; i <= Model.PageInfo.TotalPageCount; i++)

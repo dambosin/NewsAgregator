@@ -30,6 +30,8 @@ namespace NewsAgregator
             builder.Services.AddScoped<IRepository<User>, Repository<User>>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddTransient<IArticleService, AricleSrvice>();
+            builder.Services.AddTransient<ISourceService, SourceService>();
+            builder.Services.AddTransient<ICommentService, CommentService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
             // Add services to the container.

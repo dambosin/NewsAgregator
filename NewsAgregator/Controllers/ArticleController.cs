@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models;
+using NewsAgregator.Mvc.Models.Articles;
 using System.Runtime.CompilerServices;
 
 namespace NewsAgregator.Mvc.Controllers
@@ -64,7 +65,7 @@ namespace NewsAgregator.Mvc.Controllers
             var article = await _articleService.GetArticleDetailAsync(id);
             var comments = _commentService.GetCommentsByArticleId(article.Id);
             var viewModel = _mapper.Map<ArticleDetailModel>(article);
-            viewModel.Comments = comments.OrderBy(x => x.Created).ToList();
+            viewModel.Comments = comments.ToList();
             
             return View(viewModel);
         }

@@ -2,7 +2,7 @@
 using NewsAgregator.Data.Entities;
 using System.ComponentModel.DataAnnotations;
 
-namespace NewsAgregator.Mvc.Models
+namespace NewsAgregator.Mvc.Models.Articles
 {
     public class ArticleCreateModel
     {

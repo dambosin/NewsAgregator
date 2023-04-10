@@ -1,4 +1,4 @@
-﻿namespace NewsAgregator.Mvc.Models
+﻿namespace NewsAgregator.Mvc.Models.Articles
 {
     public class PageInfoModel
     {

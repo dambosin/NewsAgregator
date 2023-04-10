@@ -1,0 +1,15 @@
+﻿@model List<NewsAgregator.Mvc.Models.Sources.SourceModel>;
+
+@foreach(var source in Model){
+    <div class="card">
+        <div class="card-header">
+            @source.Name;
+        </div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p>@source.Description</p>
+                <footer class="blockquote-footer">@source.Id</footer>
+            </blockquote>
+        </div>
+    </div>
+}

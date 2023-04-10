@@ -19,7 +19,7 @@ namespace NewsAgregator.Buisness
 
         public IQueryable<CommentDto> GetCommentsByArticleId(Guid articleId)
         {
-            return _unitOfWork.Comments.FindBy((comment => comment.ArticleId == articleId), (comment => comment.User)).Select(comment => _mapper.Map<CommentDto>(comment));
+            return _unitOfWork.Comments.FindBy((comment => comment.ArticleId == articleId), (comment => comment.User)).Select(comment => _mapper.Map<CommentDto>(comment)).AsQueryable();
         }
     }
 }

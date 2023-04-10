@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
-using NewsAgregator.Mvc.Models;
+using NewsAgregator.Mvc.Models.Articles;
 
 namespace NewsAgregator.Mvc.MapperProfiles
 {
