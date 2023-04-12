@@ -5,9 +5,9 @@ using NewsAgregator.Mvc.Models.Articles;
 
 namespace NewsAgregator.Mvc.MapperProfiles
 {
-    public class ArticleProfile: Profile
+    public class ArticleProfile : Profile
     {
-        public ArticleProfile() 
+        public ArticleProfile()
         {
             CreateMap<Article, ArticleDto>();
             CreateMap<ArticleDto, Article>();

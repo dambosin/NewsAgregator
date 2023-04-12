@@ -1,6 +1,4 @@
-﻿using NewsAgregator.Data.Entities;
-
-namespace NewsAgregator.Core.Dto
+﻿namespace NewsAgregator.Core.Dto
 {
     public class ArticleCreateDto
     {

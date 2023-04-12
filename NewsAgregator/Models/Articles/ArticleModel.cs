@@ -1,6 +1,4 @@
-﻿using NewsAgregator.Data.Entities;
-
-namespace NewsAgregator.Mvc.Models.Articles
+﻿namespace NewsAgregator.Mvc.Models.Articles
 {
     public class ArticleModel
     {

@@ -25,9 +25,9 @@ namespace NewsAgregator.Buisness
         {
             return await _unitOfWork.Articles
                 .GetAsQueryable()
-                .Skip(page-1)
+                .Skip(page - 1)
                 .Take(pageSize)
-                .Select(article => 
+                .Select(article =>
                     _mapper.Map<ArticleDto>(article))
                 .ToListAsync();
         }
@@ -41,7 +41,7 @@ namespace NewsAgregator.Buisness
         public async Task CreateAsync(ArticleCreateDto article)
         {
             await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(article));
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
     }
 }

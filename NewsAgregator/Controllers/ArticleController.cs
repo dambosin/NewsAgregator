@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
-using NewsAgregator.Mvc.Models;
 using NewsAgregator.Mvc.Models.Articles;
-using System.Runtime.CompilerServices;
 
 namespace NewsAgregator.Mvc.Controllers
 {
@@ -21,7 +19,7 @@ namespace NewsAgregator.Mvc.Controllers
             IArticleService articleService,
             ICommentService commentService,
             ISourceService sourceService,
-            IConfiguration configuration, 
+            IConfiguration configuration,
             IMapper mapper)
         {
             _articleService = articleService;
@@ -43,16 +41,16 @@ namespace NewsAgregator.Mvc.Controllers
                     PageNumber = page,
                     TotalPageCount = (articleCount + pageSize - 1) / pageSize
                 };
-                if(pageInfo.PageNumber > pageInfo.TotalPageCount) pageInfo.PageNumber = pageInfo.TotalPageCount;
-                if(pageInfo.PageNumber < 1) pageInfo.PageNumber = 1;
-            var articles = await _articleService.GetArticlesByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
+                if (pageInfo.PageNumber > pageInfo.TotalPageCount) pageInfo.PageNumber = pageInfo.TotalPageCount;
+                if (pageInfo.PageNumber < 1) pageInfo.PageNumber = 1;
+                var articles = await _articleService.GetArticlesByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
                 var viewModel = new ArticleViewByPageModel
                 {
                     Articles = articles.Select(article => _mapper.Map<ArticleModel>(article)).ToList(),
                     PageInfo = pageInfo
                 };
-        
-            return View(viewModel);
+
+                return View(viewModel);
             }
             else
             {
@@ -66,7 +64,7 @@ namespace NewsAgregator.Mvc.Controllers
             var comments = _commentService.GetCommentsByArticleId(article.Id);
             var viewModel = _mapper.Map<ArticleDetailModel>(article);
             viewModel.Comments = comments.ToList();
-            
+
             return View(viewModel);
         }
 
@@ -77,10 +75,12 @@ namespace NewsAgregator.Mvc.Controllers
             {
                 AvailiableSources = _sourceSrvice
                     .GetAvailiableSources()
-                    .Select(source => 
-                        new SelectListItem { 
-                            Value = source.Id.ToString(), 
-                            Text = source.Name })
+                    .Select(source =>
+                        new SelectListItem
+                        {
+                            Value = source.Id.ToString(),
+                            Text = source.Name
+                        })
                     .ToList()
             };
             return View(viewModel);
@@ -89,17 +89,18 @@ namespace NewsAgregator.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ArticleCreateModel article)
         {
+            var articleCreate = _mapper.Map<ArticleCreateDto>(article);
             if (ModelState.IsValid)
             {
-                article.Id = Guid.NewGuid();
+                articleCreate.Id = Guid.NewGuid();
                 //todo: create positive index calculator
-                article.PositiveIndex = 0;
-                article.Created = DateTime.Now;
-                article.LikesCount = 0;
-                await _articleService.CreateAsync(_mapper.Map<ArticleCreateDto>(article));
+                articleCreate.PositiveIndex = 0;
+                articleCreate.Created = DateTime.Now;
+                articleCreate.LikesCount = 0;
+                await _articleService.CreateAsync(articleCreate);
             }
 
-            return RedirectToAction("Detail", new {id = article.Id});
+            return RedirectToAction("Detail", new { id = articleCreate.Id });
         }
     }
 }

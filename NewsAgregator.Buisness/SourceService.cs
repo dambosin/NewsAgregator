@@ -20,17 +20,25 @@ namespace NewsAgregator.Buisness
         public async Task Create(SourceCreateDto source)
         {
             await _unitOfWork.Sources.AddAsync(_mapper.Map<Source>(source));
-            _unitOfWork.Commit();
+            await _unitOfWork.Commit();
         }
 
         public List<SourceDto> GetAvailiableSources()
         {
-            return _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToList();   
+            return _unitOfWork.Sources
+                .GetAsQueryable()
+                .Select(source =>
+                    _mapper.Map<SourceDto>(source))
+                .ToList();
         }
 
         public List<SourceWithDescriptionDto> GetSources()
         {
-            return _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceWithDescriptionDto>(source)).ToList();
+            return _unitOfWork.Sources
+                .GetAsQueryable()
+                .Select(source =>
+                    _mapper.Map<SourceWithDescriptionDto>(source))
+                .ToList();
         }
     }
 }

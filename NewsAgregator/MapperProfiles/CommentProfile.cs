@@ -4,7 +4,7 @@ using NewsAgregator.Data.Entities;
 
 namespace NewsAgregator.Mvc.MapperProfiles
 {
-    public class CommentProfile: Profile
+    public class CommentProfile : Profile
     {
         public CommentProfile()
         {

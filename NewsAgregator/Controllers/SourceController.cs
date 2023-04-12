@@ -35,8 +35,9 @@ namespace NewsAgregator.Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                source.Id = Guid.NewGuid();
-                await _sourceService.Create(_mapper.Map<SourceCreateDto>(source));
+                var sourceCreate = _mapper.Map<SourceCreateDto>(source);
+                sourceCreate.Id = Guid.NewGuid();
+                await _sourceService.Create(sourceCreate);
             }
             return RedirectToAction("Index");
         }

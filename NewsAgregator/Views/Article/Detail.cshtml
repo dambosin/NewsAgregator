@@ -1,1 +1,25 @@
-﻿
+﻿@model NewsAgregator.Mvc.Models.Articles.ArticleDetailModel
+
+<div class="container">
+    <h2>@Model.Title</h2>
+    <p>@Model.Id</p>
+    <p>@Model.Created</p>
+    <p>@Model.ShortDescription</p>
+    <p>@Model.Content</p>
+    <p>@Model.PositiveIndex</p>
+    <p>@Model.LikesCount</p>
+    <form>
+
+    </form>
+    @if (Model.Comments != null)
+    {
+        @foreach (var comment in Model.Comments)
+        {
+            <div class="container">
+                <h4>@comment.User</h4>
+                <p>@comment.Text</p>
+                <p>@comment.Created</p>
+            </div>
+        }
+    }
+</div>

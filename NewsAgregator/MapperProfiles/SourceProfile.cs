@@ -5,9 +5,9 @@ using NewsAgregator.Mvc.Models.Sources;
 
 namespace NewsAgregator.Mvc.MapperProfiles
 {
-    public class SourceProfile: Profile
+    public class SourceProfile : Profile
     {
-        public SourceProfile() 
+        public SourceProfile()
         {
             CreateMap<Source, SourceDto>();
             CreateMap<Source, SourceWithDescriptionDto>();

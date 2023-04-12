@@ -4,7 +4,6 @@ namespace NewsAgregator.Mvc.Models.Sources
 {
     public class SourceCreateModel
     {
-        public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
         [Required]

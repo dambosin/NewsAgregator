@@ -1,5 +1,4 @@
 ﻿using NewsAgregator.Core.Dto;
-using NewsAgregator.Data.Entities;
 
 namespace NewsAgregator.Mvc.Models.Articles
 {
