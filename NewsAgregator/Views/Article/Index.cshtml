@@ -3,10 +3,10 @@
     <div class="container">
         <a role="button" class="btn btn-primary" asp-controller="Article" asp-action="Create">Create</a>
         <div class="row">
-        @{
-            foreach(var article in Model.Articles)
-            {
-                <div class="col-md-3">
+            @{
+                foreach (var article in Model.Articles)
+                {
+                    @*<div class="col-md-3">
                     <div class="card" style="width: 18rem;">
                         <div class="card-body">
                             <h5 class="card-title">@article.Title</h5>
@@ -14,8 +14,9 @@
                             <a asp-action="Detail" asp-controller="Article" class="btn btn-primary" asp-route-id="@article.Id">@article.Id</a>
                         </div>
                     </div>
-                </div>
-            }
+                </div>*@
+                    <partial name="_ArticleCardPartial" for="@article"/>
+                }
         }
         </div>
         <nav aria-label="...">

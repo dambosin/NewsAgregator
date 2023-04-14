@@ -7,13 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Mvc", "NewsAg
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Data", "NewsAgregator.Data\NewsAgregator.Data.csproj", "{2665A209-13D2-45E1-BE08-AA7EBC63BD93}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Repository", "NewsAgregator.Repository\NewsAgregator.Repository.csproj", "{9BDF8656-DF2A-4CD0-81AE-70D81CFC907E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Repository", "NewsAgregator.Repository\NewsAgregator.Repository.csproj", "{9BDF8656-DF2A-4CD0-81AE-70D81CFC907E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Abstractions", "NewsAgregator.Abstractions\NewsAgregator.Abstractions.csproj", "{10B1C396-E488-463D-8F4A-2F1A8B33D9AE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Abstractions", "NewsAgregator.Abstractions\NewsAgregator.Abstractions.csproj", "{10B1C396-E488-463D-8F4A-2F1A8B33D9AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Core", "NewsAgregator.Core\NewsAgregator.Core.csproj", "{5C7295CC-AF5A-4683-8C3C-36063F3D6298}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Core", "NewsAgregator.Core\NewsAgregator.Core.csproj", "{5C7295CC-AF5A-4683-8C3C-36063F3D6298}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Buisness", "NewsAgregator.Buisness\NewsAgregator.Buisness.csproj", "{EFD38A4C-1044-4A99-8CE7-D70405B34602}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Buisness", "NewsAgregator.Buisness\NewsAgregator.Buisness.csproj", "{EFD38A4C-1044-4A99-8CE7-D70405B34602}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

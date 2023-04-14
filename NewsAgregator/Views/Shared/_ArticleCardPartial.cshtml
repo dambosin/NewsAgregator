@@ -1,0 +1,12 @@
+﻿@model NewsAgregator.Mvc.Models.Articles.ArticleModel;
+
+<div class="col-12">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title"><a class="text-decoration-none link-dark" asp-action="Detail" asp-controller="Article" asp-route-id="@Model.Id">@Model.Title</a></h5>
+            <p class="card-text">@Model.ShortDescription</p>
+            <p class="card-text"><small class="text-muted">@Model.LikesCount likes</small></p>
+            <a asp-action="Detail" asp-controller="Article" class="btn btn-primary" asp-route-id="@Model.Id">Explore</a>
+        </div>
+    </div>
+</div>
