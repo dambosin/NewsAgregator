@@ -6,13 +6,12 @@
     <title>@ViewData["Title"] - NewsAgregator</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/NewsAgregator.styles.css" asp-append-version="true" />
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">NewsAgregator</a>
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index">NewsAgregator</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -32,7 +31,24 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Source" asp-action="Index">Source</a>
                         </li>
                     </ul>
-                    <p class="nav navbar-text">Hello, @User.Identity?.Name!</p>
+                    @if (User == null | !User.Identity.IsAuthenticated)
+                    {
+                        <!-- Button trigger modal -->
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                                Login
+                            </button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">
+                                Register
+                            </button>
+                        </div>
+
+                        <!-- Modal -->
+                        <partial name="_LoginPartial" model="new NewsAgregator.Mvc.Models.Account.LoginModel()"></partial>
+                        <partial name="_RegisterPartial" model="new NewsAgregator.Mvc.Models.Account.RegisterModel()"></partial>
+                    }else{
+                        <span class="navbar-text">@User.Identity.Name</span>
+                    }
                 </div>
             </div>
         </nav>

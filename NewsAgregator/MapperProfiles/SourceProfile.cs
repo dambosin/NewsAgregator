@@ -10,10 +10,8 @@ namespace NewsAgregator.Mvc.MapperProfiles
         public SourceProfile()
         {
             CreateMap<Source, SourceDto>();
-            CreateMap<Source, SourceWithDescriptionDto>();
-            CreateMap<SourceCreateDto, Source>();
-            CreateMap<SourceCreateModel, SourceCreateDto>();
-            CreateMap<SourceWithDescriptionDto, SourceModel>();
+            CreateMap<SourceDto, Source>();
+            CreateMap<SourceCreateModel, SourceDto>();
         }
     }
 }

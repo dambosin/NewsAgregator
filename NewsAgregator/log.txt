@@ -1,0 +1,10 @@
+2023-04-27 11:34:22.845 +03:00 [INF] Added seerilog
+2023-04-27 22:36:55.286 +03:00 [ERR] System.Collections.Generic.KeyNotFoundException: Article with id 00000000-0000-0000-0000-000000000000 doesn't exist
+   at NewsAgregator.Buisness.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\AricleService.cs:line 46
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 73
+2023-04-27 22:44:05.954 +03:00 [ERR] System.Collections.Generic.KeyNotFoundException: Article with id 20bc6ef1-4a6c-4fc4-a48a-81b9e7e7bda1 doesn't exist
+   at NewsAgregator.Buisness.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\AricleService.cs:line 46
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 73
+2023-04-27 22:48:37.917 +03:00 [ERR] System.Collections.Generic.KeyNotFoundException: Article with id 00000000-0000-0000-0000-000000000000 doesn't exist
+   at NewsAgregator.Buisness.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\AricleService.cs:line 46
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 73

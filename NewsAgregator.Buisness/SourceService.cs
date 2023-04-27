@@ -17,13 +17,18 @@ namespace NewsAgregator.Buisness
             _unitOfWork = unitOfWork;
         }
 
-        public async Task Create(SourceCreateDto source)
+        public async Task<Guid> Create(SourceDto source)
         {
+            do
+            {
+                source.Id = Guid.NewGuid();
+            }while(!await IsSourceExistAsync(source.Id));
             await _unitOfWork.Sources.AddAsync(_mapper.Map<Source>(source));
             await _unitOfWork.Commit();
+            return source.Id;
         }
 
-        public List<SourceDto> GetAvailiableSources()
+        public List<SourceDto> GetSources()
         {
             return _unitOfWork.Sources
                 .GetAsQueryable()
@@ -32,13 +37,10 @@ namespace NewsAgregator.Buisness
                 .ToList();
         }
 
-        public List<SourceWithDescriptionDto> GetSources()
+        private async Task<bool> IsSourceExistAsync(Guid id)
         {
-            return _unitOfWork.Sources
-                .GetAsQueryable()
-                .Select(source =>
-                    _mapper.Map<SourceWithDescriptionDto>(source))
-                .ToList();
+            var article = await _unitOfWork.Sources.GetByIdAsync(id);
+            return article != null;
         }
     }
 }

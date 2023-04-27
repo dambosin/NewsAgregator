@@ -14,35 +14,39 @@ namespace NewsAgregator.Mvc.Controllers
         private readonly ISourceService _sourceSrvice;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly Serilog.ILogger _logger;
 
         public ArticleController(
             IArticleService articleService,
             ICommentService commentService,
             ISourceService sourceService,
             IConfiguration configuration,
-            IMapper mapper)
+            IMapper mapper,
+            Serilog.ILogger logger)
         {
             _articleService = articleService;
             _commentService = commentService;
             _sourceSrvice = sourceService;
             _configuration = configuration;
             _mapper = mapper;
+            _logger = logger;
+
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index([FromQuery]int page = 1)
         {
-            var articleCount = await _articleService.CountAsync();
-
-            if (int.TryParse(_configuration["Pagination:Article:DefaultPageSize"], out var pageSize))
+            try
             {
+                if (!int.TryParse(_configuration["Pagination:Article:DefaultPageSize"], out var pageSize))
+                {
+                    throw new Exception("Cant't read configuration data");
+                }
                 var pageInfo = new PageInfoModel
                 {
                     PageSize = pageSize,
                     PageNumber = page,
-                    TotalPageCount = (articleCount + pageSize - 1) / pageSize
+                    PageAmount = await _articleService.GetPageAmount(pageSize)
                 };
-                if (pageInfo.PageNumber > pageInfo.TotalPageCount) pageInfo.PageNumber = pageInfo.TotalPageCount;
-                if (pageInfo.PageNumber < 1) pageInfo.PageNumber = 1;
                 var articles = await _articleService.GetArticlesByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
                 var viewModel = new ArticleViewByPageModel
                 {
@@ -51,21 +55,31 @@ namespace NewsAgregator.Mvc.Controllers
                 };
 
                 return View(viewModel);
+
             }
-            else
+            catch (Exception ex)
             {
-                return StatusCode(500, new { Message = "Can't read configuration data" });
+                _logger.Error(ex.ToString());
+                throw;
             }
         }
 
-        public async Task<IActionResult> Detail(Guid id)
+        public async Task<IActionResult> Detail([FromRoute]Guid id)
         {
-            var article = await _articleService.GetArticleDetailAsync(id);
-            var comments = _commentService.GetCommentsByArticleId(article.Id);
-            var viewModel = _mapper.Map<ArticleDetailModel>(article);
-            viewModel.Comments = comments.ToList();
+            try
+            {
+                var article = await _articleService.GetArticleDetailAsync(id);
+                var comments = _commentService.GetCommentsByArticleId(article.Id);
+                var viewModel = _mapper.Map<ArticleDetailModel>(article);
+                viewModel.Comments = comments.ToList();
 
-            return View(viewModel);
+                return View(viewModel);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.ToString());
+                throw;
+            }
         }
 
         [HttpGet]
@@ -74,7 +88,7 @@ namespace NewsAgregator.Mvc.Controllers
             var viewModel = new ArticleCreateModel
             {
                 AvailiableSources = _sourceSrvice
-                    .GetAvailiableSources()
+                    .GetSources()
                     .Select(source =>
                         new SelectListItem
                         {

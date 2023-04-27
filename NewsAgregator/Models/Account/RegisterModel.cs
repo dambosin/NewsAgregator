@@ -1,20 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NewsAgregator.Data.Entities
+namespace NewsAgregator.Mvc.Models.Account
 {
-    public class User : IBaseEntity
+    public class RegisterModel
     {
-        [Key]
-        public Guid Id { get; set; }
         [Required]
         public string Login { get; set; }
         [Required]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+        [Required]
         public string Name { get; set; }
         [Required]
-        public string PasswordHash { get; set; }
-        public List<Comment> Comments { get; set; }
-        public List<Like> Likes { get; set; }
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
     }
 }

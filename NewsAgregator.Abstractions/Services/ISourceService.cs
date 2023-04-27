@@ -4,8 +4,7 @@ namespace NewsAgregator.Abstractions.Services
 {
     public interface ISourceService
     {
-        public List<SourceDto> GetAvailiableSources();
-        public List<SourceWithDescriptionDto> GetSources();
-        public Task Create(SourceCreateDto source);
+        public Task<Guid> Create(SourceDto source);
+        public List<SourceDto> GetSources();
     }
 }

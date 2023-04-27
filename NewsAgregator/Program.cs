@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Negotiate;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
@@ -7,6 +7,8 @@ using NewsAgregator.Data;
 using NewsAgregator.Data.Entities;
 using NewsAgregator.Repository;
 using NewsAgregator.Repository.Implemintation;
+using Serilog;
+using Serilog.Sinks.File;
 
 namespace NewsAgregator
 {
@@ -23,28 +25,37 @@ namespace NewsAgregator
                     opt.UseSqlServer(connString);
                 });
 
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("./log.txt")
+                .CreateLogger();
+            builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
+
             builder.Services.AddScoped<IRepository<Article>, Repository<Article>>();
             builder.Services.AddScoped<IRepository<Like>, Repository<Like>>();
             builder.Services.AddScoped<IRepository<Comment>, Repository<Comment>>();
             builder.Services.AddScoped<IRepository<Source>, Repository<Source>>();
             builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            
             builder.Services.AddTransient<IArticleService, AricleSrvice>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
+            builder.Services.AddTransient<IUserService, UserService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddAuthentication(NegotiateDefaults.AuthenticationScheme)
-            .AddNegotiate();
+            builder.Services
+                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/Account/Login");
+                });
+            builder.Services.AddAuthorization();
 
-            builder.Services.AddAuthorization(options =>
-            {
-                // By default, all incoming requests will be authorized according to the default policy.
-                options.FallbackPolicy = options.DefaultPolicy;
-            });
             builder.Services.AddRazorPages();
 
             var app = builder.Build();
@@ -61,9 +72,6 @@ namespace NewsAgregator
             app.UseStaticFiles();
 
             app.UseRouting();
-
-            app.UseAuthentication();
-            app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
