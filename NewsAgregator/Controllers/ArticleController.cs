@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NewsAgregator.Abstractions.Services;
@@ -7,6 +8,7 @@ using NewsAgregator.Mvc.Models.Articles;
 
 namespace NewsAgregator.Mvc.Controllers
 {
+    [Authorize]
     public class ArticleController : Controller
     {
         private readonly IArticleService _articleService;
@@ -107,7 +109,7 @@ namespace NewsAgregator.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 articleCreate.Id = Guid.NewGuid();
-                //todo: create positive index calculator
+                //TODO: create positive index calculator
                 articleCreate.PositiveIndex = 0;
                 articleCreate.Created = DateTime.Now;
                 articleCreate.LikesCount = 0;

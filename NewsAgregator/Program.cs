@@ -26,6 +26,7 @@ namespace NewsAgregator
                 });
 
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
                 .WriteTo.File("./log.txt")
                 .CreateLogger();
             builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
@@ -54,9 +55,9 @@ namespace NewsAgregator
                     options.LoginPath = new PathString("/Account/Login");
                     options.AccessDeniedPath = new PathString("/Account/Login");
                 });
-            builder.Services.AddAuthorization();
 
             builder.Services.AddRazorPages();
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -70,8 +71,12 @@ namespace NewsAgregator
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            
             app.UseRouting();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
+
 
             app.MapControllerRoute(
                 name: "default",

@@ -46,8 +46,12 @@
                         <!-- Modal -->
                         <partial name="_LoginPartial" model="new NewsAgregator.Mvc.Models.Account.LoginModel()"></partial>
                         <partial name="_RegisterPartial" model="new NewsAgregator.Mvc.Models.Account.RegisterModel()"></partial>
+                        
                     }else{
-                        <span class="navbar-text">@User.Identity.Name</span>
+                        <span class="navbar-text mx-2">Hello, @User.Identity.Name!</span>
+                        <form method="post" asp-action="logout" asp-controller="account">
+                            <button type="submit" class="btn btn-outline-primary">Logout</button>
+                        </form>
                     }
                 </div>
             </div>
@@ -67,6 +71,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <partial name="_ValidationScriptsPartial"/>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

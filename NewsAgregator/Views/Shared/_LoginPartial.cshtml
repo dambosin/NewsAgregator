@@ -11,10 +11,12 @@
                     <div class="mb-3">
                         <label class="form-label" asp-for="Login">Login</label>
                         <input type="text" class="form-control" asp-for="Login">
+                        <span asp-validation-for="Login"></span>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" asp-for="Password">Password</label>
                         <input type="password" class="form-control" asp-for="Password">
+                        <span asp-validation-for="Password"></span>
                     </div>
                     <button type="submit" class="btn btn-primary">Login</button>
                 </form>

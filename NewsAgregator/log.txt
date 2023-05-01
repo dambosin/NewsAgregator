@@ -8,3 +8,13 @@
 2023-04-27 22:48:37.917 +03:00 [ERR] System.Collections.Generic.KeyNotFoundException: Article with id 00000000-0000-0000-0000-000000000000 doesn't exist
    at NewsAgregator.Buisness.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\AricleService.cs:line 46
    at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 73
+2023-04-30 19:35:07.090 +03:00 [ERR] User with login : Dambosin doesn't exist.
+2023-04-30 19:41:09.292 +03:00 [ERR] User with login : Dambosin doesn't exist.
+2023-04-30 19:58:32.850 +03:00 [ERR] Missing type map configuration or unsupported mapping.
+
+Mapping types:
+EntityQueryable`1 -> UserDto
+Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[NewsAgregator.Data.Entities.User, NewsAgregator.Data, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]] -> NewsAgregator.Core.Dto.UserDto
+2023-05-01 21:37:12.607 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
+2023-05-01 22:28:13.389 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
+2023-05-01 22:36:43.367 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel

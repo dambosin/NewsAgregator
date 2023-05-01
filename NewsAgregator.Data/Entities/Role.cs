@@ -2,13 +2,12 @@
 
 namespace NewsAgregator.Data.Entities
 {
-    public class Source : IBaseEntity
+    public class Role : IBaseEntity
     {
         [Key]
         public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public string? Description { get; set; }
-        public string? Url { get; set; }
+        public List<User> Users { get; set; }
     }
 }
