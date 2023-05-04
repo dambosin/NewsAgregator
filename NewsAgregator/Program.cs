@@ -36,6 +36,8 @@ namespace NewsAgregator
             builder.Services.AddScoped<IRepository<Comment>, Repository<Comment>>();
             builder.Services.AddScoped<IRepository<Source>, Repository<Source>>();
             builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+            builder.Services.AddScoped<IRepository<Role>, Repository<Role>>();
+            builder.Services.AddScoped<IRepository<UserRole>, Repository<UserRole>>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             
@@ -43,6 +45,7 @@ namespace NewsAgregator
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IUserService, UserService>();
+            builder.Services.AddTransient<IRoleService, RoleService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
             // Add services to the container.

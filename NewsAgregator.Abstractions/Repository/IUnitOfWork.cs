@@ -9,6 +9,8 @@ namespace NewsAgregator.Abstractions.Repository
         public IRepository<Like> Likes { get; }
         public IRepository<Source> Sources { get; }
         public IRepository<User> Users { get; }
+        public IRepository<Role> Roles { get; }
+        public IRepository<UserRole> UserRoles { get; }
 
         public Task<int> Commit();
     }

@@ -1,5 +1,5 @@
-﻿@model NewsAgregator.Mvc.Models.Account.LoginModel
-<form id="ValidateForm" asp-controller="Account" asp-action="Login" method="post">
+﻿@model NewsAgregator.Mvc.Models.Accounts.LoginModel
+<form  asp-controller="Account" asp-action="Login" method="post">
     <div class="mb-3">
         <label class="form-label" asp-for="Login"></label>
         <input type="text" class="form-control" asp-for="Login">
@@ -7,6 +7,7 @@
     </div>
     <div class="mb-3">
         <label class="form-label" asp-for="Password">Password</label>
+        
         <input type="password" class="form-control" asp-for="Password">
         <span asp-validation-for="Password"></span>
     </div>

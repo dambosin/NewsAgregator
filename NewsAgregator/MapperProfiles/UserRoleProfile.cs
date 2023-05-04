@@ -1,0 +1,15 @@
+﻿using AutoMapper;
+using NewsAgregator.Core.Dto;
+using NewsAgregator.Data.Entities;
+
+namespace NewsAgregator.Mvc.MapperProfiles
+{
+    public class UserRoleProfile : Profile
+    {
+        public UserRoleProfile() 
+        {
+            CreateMap<UserRoleDto, UserRole>();
+            CreateMap<UserRole, UserRoleDto>();
+        }
+    }
+}

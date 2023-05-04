@@ -12,13 +12,17 @@ namespace NewsAgregator.Repository
         private readonly IRepository<Like> _likes;
         private readonly IRepository<Source> _sources;
         private readonly IRepository<User> _users;
+        private readonly IRepository<Role> _roles;
+        private readonly IRepository<UserRole> _userRoles;
 
         public UnitOfWork(NewsAgregatorContext db,
             IRepository<Article> aritcles,
             IRepository<Comment> comments,
             IRepository<Like> likes,
             IRepository<Source> sources,
-            IRepository<User> users)
+            IRepository<User> users,
+            IRepository<Role> roles,
+            IRepository<UserRole> userRoles)
         {
             _db = db;
             _aritcles = aritcles;
@@ -26,6 +30,8 @@ namespace NewsAgregator.Repository
             _likes = likes;
             _sources = sources;
             _users = users;
+            _roles = roles;
+            _userRoles = userRoles;
         }
 
         public IRepository<Article> Articles => _aritcles;
@@ -37,6 +43,8 @@ namespace NewsAgregator.Repository
         public IRepository<Source> Sources => _sources;
 
         public IRepository<User> Users => _users;
+        public IRepository<Role> Roles => _roles;
+        public IRepository<UserRole > UserRoles => _userRoles;
 
         public async Task<int> Commit()
         {

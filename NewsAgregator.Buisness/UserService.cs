@@ -48,18 +48,28 @@ namespace NewsAgregator.Buisness
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             return _mapper.Map<UserDto>(user);
         }
-        public ClaimsIdentity LoginUser(string login, string password)
+        public async Task<ClaimsIdentity> LoginUser(string login, string password)
         {
             const string AuthType = "Application Cookie";
             if (!IsLoginAvailiable(login))
             {
-                var passwordHash = GetUser(login).PasswordHash;
-                if (IsPasswordCorrect(password, passwordHash))
+                var user = GetUser(login);
+                if (IsPasswordCorrect(password, user.PasswordHash))
                 {
                     var claims = new List<Claim>
                     {
                         new Claim(ClaimsIdentity.DefaultNameClaimType, login),
                     };
+                    var userRoles = _unitOfWork.UserRoles.FindBy(userRole => userRole.UserId == user.Id).Select(uRole => _mapper.Map<UserRoleDto>(uRole)).ToList();
+                    List<Role> roles = new();
+                    foreach (var role in userRoles)
+                    {
+                        roles.Add(await _unitOfWork.Roles.GetByIdAsync(role.RoleId));
+                    }
+                    foreach(var role in roles)
+                    {
+                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+                    }
 
                     var identity = new ClaimsIdentity(
                         claims,
@@ -86,7 +96,17 @@ namespace NewsAgregator.Buisness
                 user.Id = Guid.NewGuid();
             } while(await IsUserExist(user.Id));
             user.PasswordHash = GetPasswordHash(user.Password);
+            var userRole = new UserRoleDto
+            {
+                UserId = user.Id,
+                RoleId = _unitOfWork.Roles.FindBy(role => role.Name.Equals("User")).First().Id
+            };
+            do
+            {
+                userRole.Id = Guid.NewGuid();
+            } while (await _unitOfWork.UserRoles.GetByIdAsync(userRole.Id) != null);
             await _unitOfWork.Users.AddAsync(_mapper.Map<User>(user));
+            await _unitOfWork.UserRoles.AddAsync(_mapper.Map<UserRole>(userRole));
             await _unitOfWork.Commit();
             return user.Id;
             

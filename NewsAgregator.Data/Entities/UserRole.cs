@@ -2,7 +2,7 @@
 
 namespace NewsAgregator.Data.Entities
 {
-    public class UserRole
+    public class UserRole : IBaseEntity
     {
         [Key]
         public Guid Id { get; set; }

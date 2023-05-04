@@ -1,0 +1,27 @@
+﻿@model NewsAgregator.Mvc.Models.Roles.RolesViewModel
+<div class="row">
+    <a asp-controller="Admin" asp-action="CreateRole" class="btn btn-primary align-content-lg-center col-3">Create</a>
+</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Id</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            foreach(var role in Model.Roles)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td><a class="btn btn-outline-primary" asp-controller="Admin" asp-action="UpdateRole" asp-route-id="@role.Id">@role.Name</a></td>
+                    <td>@role.Id</td>
+                </tr>
+
+            }
+        }
+    </tbody>
+</table>

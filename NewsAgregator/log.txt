@@ -18,3 +18,5 @@ Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[NewsAgregator.Da
 2023-05-01 21:37:12.607 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
 2023-05-01 22:28:13.389 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
 2023-05-01 22:36:43.367 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
+2023-05-02 11:22:41.251 +03:00 [ERR] Invalid login or password
+2023-05-04 21:57:38.840 +03:00 [ERR] There is already an open DataReader associated with this Connection which must be closed first.

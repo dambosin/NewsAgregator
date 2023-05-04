@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
-using NewsAgregator.Mvc.Models.Account;
+using NewsAgregator.Mvc.Models.Accounts;
 using System.Security.Claims;
 
 namespace NewsAgregator.Mvc.Controllers
@@ -39,9 +39,7 @@ namespace NewsAgregator.Mvc.Controllers
                 {
                     throw new InvalidDataException($"Login model isn't valid. {model}");
                 }
-                await HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(_userService.LoginUser(model.Login, model.Password)));
+                await LoginUser(model);
                 return RedirectToAction("index", "home");
             }
             catch ( Exception ex)
@@ -50,20 +48,37 @@ namespace NewsAgregator.Mvc.Controllers
                 throw;
             }
         }
+
+        private async Task LoginUser(LoginModel model)
+        {
+            await HttpContext.SignInAsync(
+                                CookieAuthenticationDefaults.AuthenticationScheme,
+                                new ClaimsPrincipal(await _userService.LoginUser(model.Login, model.Password)));  
+            
+        }
+
         [HttpPost]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync("Cookies");
-            return RedirectToAction("index", "home");
+            try
+            {
+                await HttpContext.SignOutAsync("Cookies");
+                return RedirectToAction("index", "home");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
         }
         [HttpPost]
-        public async Task<IActionResult> Register([FromForm]RegisterModel model)
+        public async Task<IActionResult> Register([FromForm] RegisterModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
-                    throw new InvalidDataException($"Register model isn't valid. {model}" );
+                    throw new InvalidDataException($"Register model isn't valid. {model}");
                 }
                 await _userService.RegisterUser(_mapper.Map<UserDto>(model));
                 return RedirectToAction("index", "home");
@@ -74,7 +89,7 @@ namespace NewsAgregator.Mvc.Controllers
             {
                 _logger.Error(ex.Message);
                 throw;
-            }        
+            }
         }
     }
 }

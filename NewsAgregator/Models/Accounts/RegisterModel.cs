@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace NewsAgregator.Mvc.Models.Account
+namespace NewsAgregator.Mvc.Models.Accounts
 {
     public class RegisterModel
     {
