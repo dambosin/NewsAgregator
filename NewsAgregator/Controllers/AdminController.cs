@@ -7,7 +7,8 @@ using NewsAgregator.Mvc.Models.Roles;
 
 namespace NewsAgregator.Mvc.Controllers
 {
-    
+    // Todo: correct redirect
+    // Todo: managers (add/update/deleete)
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {

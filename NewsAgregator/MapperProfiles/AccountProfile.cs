@@ -12,6 +12,7 @@ namespace NewsAgregator.Mvc.MapperProfiles
             CreateMap<User, UserDto>();
             CreateMap<RegisterModel, UserDto>();
             CreateMap<UserDto, User>();
+            CreateMap<RegisterModel, LoginModel>();    
         }
     }
 }

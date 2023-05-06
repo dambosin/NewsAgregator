@@ -8,7 +8,6 @@ using NewsAgregator.Data.Entities;
 using NewsAgregator.Repository;
 using NewsAgregator.Repository.Implemintation;
 using Serilog;
-using Serilog.Sinks.File;
 
 namespace NewsAgregator
 {
@@ -48,7 +47,7 @@ namespace NewsAgregator
             builder.Services.AddTransient<IRoleService, RoleService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
-            // Add services to the container.
+
             builder.Services.AddControllersWithViews();
 
             builder.Services
@@ -56,7 +55,7 @@ namespace NewsAgregator
                 .AddCookie(options =>
                 {
                     options.LoginPath = new PathString("/Account/Login");
-                    options.AccessDeniedPath = new PathString("/Account/Login");
+                    options.AccessDeniedPath = new PathString("/Account/AccessDenied");
                 });
 
             builder.Services.AddRazorPages();

@@ -48,6 +48,10 @@ namespace NewsAgregator.Mvc.Controllers
                 throw;
             }
         }
+        public IActionResult AccessDenied()
+        {
+            return StatusCode(403);
+        }
 
         private async Task LoginUser(LoginModel model)
         {
@@ -81,6 +85,7 @@ namespace NewsAgregator.Mvc.Controllers
                     throw new InvalidDataException($"Register model isn't valid. {model}");
                 }
                 await _userService.RegisterUser(_mapper.Map<UserDto>(model));
+                await LoginUser(_mapper.Map<LoginModel>(model));
                 return RedirectToAction("index", "home");
 
 

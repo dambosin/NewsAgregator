@@ -60,15 +60,10 @@ namespace NewsAgregator.Buisness
                     {
                         new Claim(ClaimsIdentity.DefaultNameClaimType, login),
                     };
-                    var userRoles = _unitOfWork.UserRoles.FindBy(userRole => userRole.UserId == user.Id).Select(uRole => _mapper.Map<UserRoleDto>(uRole)).ToList();
-                    List<Role> roles = new();
-                    foreach (var role in userRoles)
+                    var userRoles = _unitOfWork.UserRoles.FindBy(userRole => userRole.UserId == user.Id, user => user.Role).Select(uRole => _mapper.Map<UserRoleDto>(uRole)).ToList();
+                    foreach(var role in userRoles)
                     {
-                        roles.Add(await _unitOfWork.Roles.GetByIdAsync(role.RoleId));
-                    }
-                    foreach(var role in roles)
-                    {
-                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
+                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Role.Name));
                     }
 
                     var identity = new ClaimsIdentity(
