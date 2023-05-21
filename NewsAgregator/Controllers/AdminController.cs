@@ -66,5 +66,37 @@ namespace NewsAgregator.Mvc.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> UpdateRole([FromRoute]Guid id)
+        {
+            try
+            {
+                var role = await _roleService.GetByIdAsync(id);
+                return View(_mapper.Map<RoleUpdateModel>(role));
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> UpdateRole([FromForm]RoleUpdateModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidDataException();
+                }
+                await _roleService.Update(_mapper.Map<RoleDto>(model));
+                return RedirectToAction("ManageRoles");
+            }
+            catch(Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
     }
 }

@@ -9,5 +9,7 @@ namespace NewsAgregator.Abstractions.Services
         Task<ArticleDto> GetArticleDetailAsync(Guid id);
         Task<Guid> CreateAsync(ArticleCreateDto article);
         Task<int> GetPageAmount(int pageSize);
+        Task<int> LoadArticlesFromSources();
+        Task<double> RateTextAsync(string text);
     }
 }

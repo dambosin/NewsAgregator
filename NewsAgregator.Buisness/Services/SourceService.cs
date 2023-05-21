@@ -4,7 +4,7 @@ using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 
-namespace NewsAgregator.Buisness
+namespace NewsAgregator.Buisness.Services
 {
     public class SourceService : ISourceService
     {
@@ -19,12 +19,8 @@ namespace NewsAgregator.Buisness
 
         public async Task<Guid> Create(SourceDto source)
         {
-            do
-            {
-                source.Id = Guid.NewGuid();
-            }while(!await IsSourceExistAsync(source.Id));
             await _unitOfWork.Sources.AddAsync(_mapper.Map<Source>(source));
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return source.Id;
         }
 

@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using NewsAgregator.Abstractions;
 using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
-using NewsAgregator.Buisness;
+using NewsAgregator.Buisness.Parsers;
+using NewsAgregator.Buisness.Services;
 using NewsAgregator.Data;
 using NewsAgregator.Data.Entities;
 using NewsAgregator.Repository;
@@ -29,6 +31,12 @@ namespace NewsAgregator
                 .WriteTo.File("./log.txt")
                 .CreateLogger();
             builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
+
+            builder.Services.AddScoped<ISiteParser, OnlinerParser>();
+            builder.Services.AddScoped<ISiteParser, TutbyParser>();
+            builder.Services.AddScoped<ISiteParser, DtfParseer>();
+            builder.Services.AddTransient<ISiteParserFactory, SiteParserFactory>();
+
 
             builder.Services.AddScoped<IRepository<Article>, Repository<Article>>();
             builder.Services.AddScoped<IRepository<Like>, Repository<Like>>();

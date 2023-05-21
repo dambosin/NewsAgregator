@@ -3,7 +3,7 @@ using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 
-namespace NewsAgregator.Buisness
+namespace NewsAgregator.Buisness.Services
 {
     public class CommentService : ICommentService
     {
@@ -20,8 +20,8 @@ namespace NewsAgregator.Buisness
         {
             return _unitOfWork.Comments
                 .FindBy(
-                (comment => comment.ArticleId == articleId),
-                (comment => comment.User))
+                comment => comment.ArticleId == articleId,
+                comment => comment.User)
                 .Select(comment =>
                     _mapper.Map<CommentDto>(comment))
                 .AsQueryable();

@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace NewsAgregator.Buisness
+namespace NewsAgregator.Buisness.Services
 {
     public class UserService : IUserService
     {
@@ -60,8 +60,11 @@ namespace NewsAgregator.Buisness
                     {
                         new Claim(ClaimsIdentity.DefaultNameClaimType, login),
                     };
-                    var userRoles = _unitOfWork.UserRoles.FindBy(userRole => userRole.UserId == user.Id, user => user.Role).Select(uRole => _mapper.Map<UserRoleDto>(uRole)).ToList();
-                    foreach(var role in userRoles)
+                    var userRoles = _unitOfWork.UserRoles
+                        .FindBy(userRole => userRole.UserId == user.Id, user => user.Role)
+                        .Select(uRole => _mapper.Map<UserRoleDto>(uRole))
+                        .ToList();
+                    foreach (var role in userRoles)
                     {
                         claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Role.Name));
                     }
@@ -86,25 +89,17 @@ namespace NewsAgregator.Buisness
             {
                 throw new Exception($"User with email : {user.Email} already exist.");
             }
-            do
-            {
-                user.Id = Guid.NewGuid();
-            } while(await IsUserExist(user.Id));
             user.PasswordHash = GetPasswordHash(user.Password);
             var userRole = new UserRoleDto
             {
                 UserId = user.Id,
                 RoleId = _unitOfWork.Roles.FindBy(role => role.Name.Equals("User")).First().Id
             };
-            do
-            {
-                userRole.Id = Guid.NewGuid();
-            } while (await _unitOfWork.UserRoles.GetByIdAsync(userRole.Id) != null);
             await _unitOfWork.Users.AddAsync(_mapper.Map<User>(user));
             await _unitOfWork.UserRoles.AddAsync(_mapper.Map<UserRole>(userRole));
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return user.Id;
-            
+
         }
         public bool IsLoginAvailiable(string login)
         {
@@ -113,7 +108,7 @@ namespace NewsAgregator.Buisness
         public bool IsEmailAvailiable(string email)
         {
             return !_unitOfWork.Users.FindBy(user => user.Email == email).Any();
-            
+
         }
 
         private string GetPasswordHash(string password)
@@ -135,9 +130,9 @@ namespace NewsAgregator.Buisness
             }
             return sb.ToString();
         }
-        private async  Task<bool> IsUserExist(Guid id)
+        private async Task<bool> IsUserExist(Guid id)
         {
-            return (await _unitOfWork.Users.GetByIdAsync(id)) != null;
+            return await _unitOfWork.Users.GetByIdAsync(id) != null;
         }
         private bool IsPasswordCorrect(string password, string passwordHash)
         {

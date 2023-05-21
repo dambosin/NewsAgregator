@@ -7,5 +7,6 @@ namespace NewsAgregator.Abstractions.Services
         List<RoleDto> GetRoles();
         Task<Guid> CreateAsyc(RoleDto role);
         Task<RoleDto?> GetByIdAsync(Guid id);
+        Task Update(RoleDto role);
     }
 }

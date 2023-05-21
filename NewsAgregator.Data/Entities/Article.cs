@@ -7,6 +7,10 @@ namespace NewsAgregator.Data.Entities
         [Key]
         [Required]
         public Guid Id { get; set; }
+        [Required]
+        public string UrlHeader { get; set; }
+        public string IdOnSite { get; set; }
+        public string UrlThumbnail { get; set; }
         public string? Title { get; set; }
         public string? ShortDescription { get; set; }
         public string? Content { get; set; }

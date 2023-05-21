@@ -12,6 +12,6 @@ namespace NewsAgregator.Abstractions.Repository
         public IRepository<Role> Roles { get; }
         public IRepository<UserRole> UserRoles { get; }
 
-        public Task<int> Commit();
+        public Task<int> CommitAsync();
     }
 }

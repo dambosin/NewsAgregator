@@ -12,6 +12,8 @@ namespace NewsAgregator.Mvc.MapperProfiles
             CreateMap<Role, RoleDto>();
             CreateMap<RoleDto, Role>();
             CreateMap<RoleCreateModel, RoleDto>();
+            CreateMap<RoleUpdateModel, RoleDto>();
+            CreateMap<RoleDto, RoleUpdateModel>();
         }
     }
 }

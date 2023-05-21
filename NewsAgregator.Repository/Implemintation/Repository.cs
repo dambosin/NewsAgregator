@@ -55,7 +55,7 @@ namespace NewsAgregator.Repository.Implemintation
 
         public void Dispose()
         {
-            _db.Dispose();
+            _db.Dispose();  
             GC.SuppressFinalize(this);
         }
 

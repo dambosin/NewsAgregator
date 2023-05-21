@@ -20,3 +20,180 @@ Microsoft.EntityFrameworkCore.Query.Internal.EntityQueryable`1[[NewsAgregator.Da
 2023-05-01 22:36:43.367 +03:00 [ERR] Login model isn't valid. NewsAgregator.Mvc.Models.Account.LoginModel
 2023-05-02 11:22:41.251 +03:00 [ERR] Invalid login or password
 2023-05-04 21:57:38.840 +03:00 [ERR] There is already an open DataReader associated with this Connection which must be closed first.
+2023-05-11 11:27:11.805 +03:00 [ERR] Missing type map configuration or unsupported mapping.
+
+Mapping types:
+RoleDto -> RoleUpdateModel
+NewsAgregator.Core.Dto.RoleDto -> NewsAgregator.Mvc.Models.Roles.RoleUpdateModel
+2023-05-11 11:27:16.201 +03:00 [ERR] Missing type map configuration or unsupported mapping.
+
+Mapping types:
+RoleDto -> RoleUpdateModel
+NewsAgregator.Core.Dto.RoleDto -> NewsAgregator.Mvc.Models.Roles.RoleUpdateModel
+2023-05-13 16:40:20.714 +03:00 [INF] Tried to access 2, when max is 1. Value was changed to 1
+2023-05-19 03:45:37.084 +03:00 [ERR] Newtonsoft.Json.JsonSerializationException: Error converting value {null} to type 'System.Int32'. Path '', line 1, position 8.
+ ---> System.InvalidCastException: Null object cannot be converted to a value type.
+   at System.Convert.ChangeType(Object value, Type conversionType, IFormatProvider provider)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   --- End of inner exception stack trace ---
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureType(JsonReader reader, Object value, CultureInfo culture, JsonContract contract, Type targetType)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.PopulateDictionary(IDictionary dictionary, JsonReader reader, JsonDictionaryContract contract, JsonProperty containerProperty, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateObject(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, JsonContainerContract containerContract, JsonProperty containerMember, Object existingValue)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at NewsAgregator.Buisness.Services.AricleSrvice.RateTextAsync(String text) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\Services\AricleService.cs:line 134
+   at NewsAgregator.Buisness.Services.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\Services\AricleService.cs:line 61
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 74
+2023-05-19 04:03:11.329 +03:00 [ERR] Newtonsoft.Json.JsonSerializationException: Cannot deserialize the current JSON array (e.g. [1,2,3]) into type 'NewsAgregator.Buisness.Models.LemmaResponse' because the type requires a JSON object (e.g. {"name":"value"}) to deserialize correctly.
+To fix this error either change the JSON to a JSON object (e.g. {"name":"value"}) or change the deserialized type to an array or a type that implements a collection interface (e.g. ICollection, IList) like List<T> that can be deserialized from a JSON array. JsonArrayAttribute can also be added to the type to force it to deserialize from a JSON array.
+Path '', line 1, position 1.
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.EnsureArrayContract(JsonReader reader, Type objectType, JsonContract contract)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.CreateList(JsonReader reader, Type objectType, JsonContract contract, JsonProperty member, Object existingValue, String id)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject(String value, Type type, JsonSerializerSettings settings)
+   at Newtonsoft.Json.JsonConvert.DeserializeObject[T](String value, JsonSerializerSettings settings)
+   at NewsAgregator.Buisness.Services.AricleSrvice.RateTextAsync(String text) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\Services\AricleService.cs:line 158
+   at NewsAgregator.Buisness.Services.AricleSrvice.GetArticleDetailAsync(Guid id) in D:\Projects\NewsAgregator\NewsAgregator.Buisness\Services\AricleService.cs:line 64
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 74
+2023-05-20 20:29:18.025 +03:00 [WRN] Internal Server Error
+2023-05-20 20:32:52.788 +03:00 [WRN] Internal Server Error
+2023-05-20 20:33:36.624 +03:00 [WRN] Internal Server Error
+2023-05-20 20:33:36.744 +03:00 [WRN] Internal Server Error
+2023-05-20 21:34:13.688 +03:00 [WRN] Internal Server Error
+2023-05-20 21:35:12.263 +03:00 [WRN] Internal Server Error
+2023-05-20 21:35:12.421 +03:00 [WRN] Internal Server Error
+2023-05-20 22:33:41.927 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-1ca6c4c4c3c30626ff810aa7663d373b-bc402f294fc7829c-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2650
+}
+2023-05-20 22:34:03.153 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-1ca6c4c4c3c30626ff810aa7663d373b-dba8c8a7ed6018cb-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 17792
+}
+2023-05-20 22:34:13.901 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-1ca6c4c4c3c30626ff810aa7663d373b-965ebce4ae61b6bb-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1592
+}
+2023-05-20 22:38:39.163 +03:00 [INF] Tried to access 1, when max is 0. Value was changed to 0
+2023-05-20 22:38:39.651 +03:00 [ERR] Microsoft.Data.SqlClient.SqlException (0x80131904): The offset specified in a OFFSET clause may not be negative.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryHasMoreRows(Boolean& moreRows)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryReadInternal(Boolean setTimeout, Boolean& more)
+   at Microsoft.Data.SqlClient.SqlDataReader.ReadAsyncExecute(Task task, Object state)
+   at Microsoft.Data.SqlClient.SqlDataReader.InvokeAsyncCall[T](SqlDataReaderAsyncCallContext`1 context)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at NewsAgregator.Buisness.Services.AricleSrvice.GetArticlesByPageAsync(Int32 pageNumber, Int32 pageSize)
+   at NewsAgregator.Mvc.Controllers.ArticleController.Index(Int32 page) in D:\Projects\NewsAgregator\NewsAgregator\Controllers\ArticleController.cs:line 53
+ClientConnectionId:7db566d8-301c-4d2e-a717-8eb4e14ccde2
+Error Number:10742,State:1,Class:15
+2023-05-20 22:43:10.827 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-cb12231331a7b145513617a8b5e4fa94-aa1df5de6ec18b44-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2651
+}
+2023-05-20 22:43:53.757 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-cb12231331a7b145513617a8b5e4fa94-2e7f366b4dd8a19a-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1326
+}
+2023-05-21 10:23:31.998 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-68e3e51edf2ff3a1f0a7803ce1ff916f-a35547efe43bef16-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2651
+}
+2023-05-21 10:24:22.360 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-68e3e51edf2ff3a1f0a7803ce1ff916f-1234c55e144e850a-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1326
+}
+2023-05-21 16:16:57.933 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-459103d76345916dc8dcee78209d1b11-976a35507914a73f-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1477
+}
+2023-05-21 16:17:34.737 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-459103d76345916dc8dcee78209d1b11-ebf1a49dbfcbad49-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2651
+}
+2023-05-21 16:18:34.337 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-459103d76345916dc8dcee78209d1b11-27ac61c78484bcae-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1326
+}
+2023-05-21 19:45:39.218 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-c44dc9662f63fc55a7e11e60757a617d-8ca0befca9e7b438-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1537
+}
+2023-05-21 19:46:11.004 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-c44dc9662f63fc55a7e11e60757a617d-45535fa615b6f3c8-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2651
+}
+2023-05-21 19:47:05.634 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-c44dc9662f63fc55a7e11e60757a617d-f649ee4957a43402-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1326
+}
+2023-05-21 21:24:30.804 +03:00 [ERR] System.Collections.Generic.KeyNotFoundException: Article with id 71b7dd3a-e3de-48c7-7a46-08db5a1b0739 doesn't exist
+   at NewsAgregator.Buisness.Services.AricleSrvice.GetArticleDetailAsync(Guid id)
+   at NewsAgregator.Mvc.Controllers.ArticleController.Detail(Guid id)
+2023-05-21 21:29:54.940 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-5b378d73fc816dd5f4834d2a9b3f49f4-76dd005e11f84d76-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1537
+}
+2023-05-21 21:30:28.633 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-5b378d73fc816dd5f4834d2a9b3f49f4-72b9bd109ee80099-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 2651
+}
+2023-05-21 21:31:28.590 +03:00 [WRN] Internal Server Error Method: POST, RequestUri: 'http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey=f35169100cb4cd6b8ca1a4aede1642016f977d9e', Version: 1.1, Content: System.Net.Http.StringContent, Headers:
+{
+  Accept: application/json
+  traceparent: 00-5b378d73fc816dd5f4834d2a9b3f49f4-66ad0bae0177908a-00
+  Content-Type: application/json; charset=utf-8
+  Content-Length: 1326
+}

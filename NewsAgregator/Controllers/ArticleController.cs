@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models.Articles;
@@ -117,6 +118,12 @@ namespace NewsAgregator.Mvc.Controllers
             }
 
             return RedirectToAction("Detail", new { id = articleCreate.Id });
+        }
+        [HttpPost]
+        public async Task<IActionResult> LoadArticles()
+        {
+            await _articleService.LoadArticlesFromSources();
+            return RedirectToAction("Index");
         }
     }
 }

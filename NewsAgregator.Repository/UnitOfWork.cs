@@ -1,4 +1,5 @@
-﻿using NewsAgregator.Abstractions.Repository;
+﻿using Microsoft.EntityFrameworkCore;
+using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Data;
 using NewsAgregator.Data.Entities;
 
@@ -46,7 +47,7 @@ namespace NewsAgregator.Repository
         public IRepository<Role> Roles => _roles;
         public IRepository<UserRole > UserRoles => _userRoles;
 
-        public async Task<int> Commit()
+        public async Task<int> CommitAsync()
         {
             return await _db.SaveChangesAsync();
         }
@@ -54,11 +55,6 @@ namespace NewsAgregator.Repository
         public void Dispose()
         {
             _db.Dispose();
-            Articles.Dispose();
-            Comments.Dispose();
-            Likes.Dispose();
-            Sources.Dispose();
-            Users.Dispose();
             GC.SuppressFinalize(this);
         }
     }

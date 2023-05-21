@@ -5,7 +5,7 @@ using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using NewsAgregator.Data.Migrations;
 
-namespace NewsAgregator.Buisness
+namespace NewsAgregator.Buisness.Services
 {
     public class RoleService : IRoleService
     {
@@ -26,12 +26,8 @@ namespace NewsAgregator.Buisness
             {
                 throw new Exception($"Role with name : {role.Name} already exist");
             }
-            do
-            {
-                role.Id = Guid.NewGuid();
-            } while (await GetByIdAsync(role.Id) != null);
             await _unitOfWork.Roles.AddAsync(_mapper.Map<Role>(role));
-            await _unitOfWork.Commit();
+            await _unitOfWork.CommitAsync();
             return role.Id;
         }
         private bool IsNameAvailable(string name)
@@ -46,6 +42,17 @@ namespace NewsAgregator.Buisness
         public async Task<RoleDto?> GetByIdAsync(Guid id)
         {
             return _mapper.Map<RoleDto>(await _unitOfWork.Roles.GetByIdAsync(id));
+        }
+        public async Task Update(RoleDto role)
+        {
+            var roles = _unitOfWork.Roles.FindBy(roleDb => roleDb.Name.Equals(role.Name));
+            if (roles.Count() > 1 | (roles.Any() && roles.First().Id != role.Id))
+            {
+                throw new InvalidDataException();
+            }
+            _unitOfWork.Roles
+                .Update(_mapper.Map<Role>(role));
+            await _unitOfWork.CommitAsync();
         }
     }
 }
