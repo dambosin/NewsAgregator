@@ -89,7 +89,7 @@ namespace NewsAgregator.Mvc.Controllers
                 {
                     throw new InvalidDataException();
                 }
-                await _roleService.Update(_mapper.Map<RoleDto>(model));
+                await _roleService.UpdateAsync(_mapper.Map<RoleDto>(model));
                 return RedirectToAction("ManageRoles");
             }
             catch(Exception ex)

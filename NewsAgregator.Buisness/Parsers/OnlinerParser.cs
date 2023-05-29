@@ -5,13 +5,16 @@ using NewsAgregator.Abstractions;
 using NewsAgregator.Core.Dto;
 using System.ServiceModel.Syndication;
 using System.Xml;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using System.Xml.XPath;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace NewsAgregator.Buisness.Parsers
 {
     public class OnlinerParser : ISiteParser
     {
-        public async Task<List<ArticleCreateDto>> Parse(SourceDto source)
+        public List<ArticleCreateDto> Parse(SourceDto source)
         {
             List<ArticleCreateDto> articles = new();
             using (var reader = XmlReader.Create(source.RssUrl))
@@ -19,7 +22,7 @@ namespace NewsAgregator.Buisness.Parsers
                 var feed = SyndicationFeed.Load(reader);
                 foreach (var item in feed.Items)
                 {
-                    using (var browser = new BrowserSession(new SessionConfiguration
+                    using var browser = new BrowserSession(new SessionConfiguration
                     {
                         AppHost = "Onliner.by",
                         Browser = Coypu.Drivers.Browser.Edge,
@@ -27,64 +30,68 @@ namespace NewsAgregator.Buisness.Parsers
                         Driver = typeof(SeleniumWebDriver),
                         Timeout = TimeSpan.FromSeconds(3),
                         RetryInterval = TimeSpan.FromSeconds(0.1)
-                    }))
+                    });
+                    //Manage news page
+                    browser.Visit(item.Id.ToString());
+                    var element = browser.FindXPath("//body");
+                    var news = element.OuterHTML;
+                    var doc = new HtmlDocument();
+                    doc.LoadHtml(news);
+                    var content = SelectNode(doc, "//div[contains(concat(\" \", normalize-space(@class), \" \"), \" news-text \")]");
+                    var endNode = SelectNode(content, "./div[@id=\"news-text-end\"] | ./hr");
+                    endNode ??= SelectNode(content, "./*[@style = \"text-align: right;\"]").PreviousSibling;
+                    RemoveEndNodes(endNode);
+                    RemoveNodes(content, "./text() | ./script | ./div[not(contains(concat(\" \", normalize-space(@class), \" \"), \" news-media \"))] | ./p[@style]");
+                    RemoveNodes(content, "./p/a | ./a", node => node.InnerText.Equals("") || node.InnerText.Equals("\r\n\r\n") || node.HasClass("news-banner"));
+                    RemoveNodes(content, "./p", node => node.InnerText.Equals("") && !node.HasChildNodes);
+                    ExtractMedia(content);
+                    AddClassesToHtml(content);
+                    var header = ExtractHeaderImage(doc);
+
+                    //Manage rss item
+                    var doc2 = new HtmlDocument();
+                    doc2.LoadHtml(item.Summary.Text);
+                    var description = doc2.DocumentNode;
+                    string thumbnail = description.SelectSingleNode("p/a/img").Attributes["src"].Value;
+                    RemoveNodes(description, ".//img", node => true);
+                    RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
+                    RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
+                    description.LastChild.Remove();
+
+                    var article = new ArticleCreateDto
                     {
-                        browser.Visit(item.Id.ToString());
-                        var element = browser.FindXPath("//body");
-                        var news = element.OuterHTML;
-                        var doc = new HtmlDocument();
-                        doc.LoadHtml(news);
-                        // todo: load title image for detail news from bg-image
-                        // todo: manage carousel
-                        var content = doc.DocumentNode.SelectSingleNode("//*[@class=\"news-text\"]");
-                        var endNode = content.SelectSingleNode("./div[@id=\"news-text-end\"] | ./hr");
-                        RemoveEndNodes(endNode);
-                        RemoveNodes(content, "./text() | ./script | ./div[not(contains(@class, \"news-media\"))] | ./p[@style]");
-                        RemoveNodes(content, "./p/a | ./a", node => node.InnerText.Equals("") || node.InnerText.Equals("\r\n\r\n") || node.HasClass("news-banner"));
-                        RemoveNodes(content, "./p", node => node.InnerText.Equals(""));
-                        ExtractMedia(content);
-                        AddClassesToHtml(content);
-                        var header = ExtractHeaderImage(doc, content);
-                        var doc2 = new HtmlDocument();
-                        doc2.LoadHtml(item.Summary.Text);
-                        var description = doc2.DocumentNode;
-                        string thumbnail = description.SelectSingleNode("p/a/img").Attributes["src"].Value;
-                        RemoveNodes(description, ".//img", node => true);
-                        RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
-                        RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
-                        description.LastChild.Remove();
-                        var article = new ArticleCreateDto
-                        {
-                            UrlHeader = header,
-                            UrlThumbnail = thumbnail,
-                            Title = item.Title.Text,
-                            ShortDescription = description.InnerHtml,
-                            Content = content.InnerHtml,
-                            PositiveIndex = 0,
-                            Created = DateTime.Now,
-                            LikesCount = 0,
-                            SourceId = source.Id,
-                            IdOnSite = item.Id
-                        };
-                        articles.Add(article);
-                        Console.Write("adjfdafadf");
-                   }
+                        UrlHeader = header,
+                        UrlThumbnail = thumbnail,
+                        Title = item.Title.Text,
+                        ShortDescription = description.InnerHtml,
+                        Content = content.InnerHtml,
+                        PositiveIndex = 0,
+                        Created = DateTime.Now,
+                        LikesCount = 0,
+                        SourceId = source.Id,
+                        IdOnSite = item.Id
+                    };
+                    articles.Add(article);
                 }
                 reader.Close();
             }
             return articles;
         }
 
-        private static string ExtractHeaderImage(HtmlDocument document, HtmlNode content)
+        private static HtmlNode SelectNode(HtmlDocument document, string xPath)
+            => document.DocumentNode.SelectSingleNode(xPath);
+        private static HtmlNode SelectNode(HtmlNode node, string xPath)
+            => node.SelectSingleNode(xPath);
+
+        private static string ExtractHeaderImage(HtmlDocument document)
         {
-            var divWithBg = document.DocumentNode.SelectSingleNode("//div[contains(concat(' ',normalize-space(@class),' '),\" news-header__image \")]");
+            var divWithBg = SelectNode(document, "//div[contains(concat(' ',normalize-space(@class),' '),\" news-header__image \")]");
             var style = divWithBg.Attributes["style"].Value;
             if (style.Contains('\''))
             {
                 return style.Substring(style.IndexOf('\'') + 1, style.LastIndexOf('\'') - style.IndexOf('\'') - 1);
             }
             return style.Substring(style.IndexOf('(') + 1, style.IndexOf(')') - style.IndexOf('(') - 1);
-
         }
 
         private static void AddClassesToHtml(HtmlNode content)
@@ -106,7 +113,6 @@ namespace NewsAgregator.Buisness.Parsers
                 switch (node.Name)
                 {
                     case "img":
-                        node.ParentNode.AddClass("row text-center mb-3 justify-content-center");
                         node.AddClass("col-md-12 col-xl-11 rounded");
                         break;
                     case "p":
@@ -114,6 +120,12 @@ namespace NewsAgregator.Buisness.Parsers
                         break;
                     case "a":
                         node.AddClass("link-info link-underline-opacity-25 link-underline-opacity-100-hover");
+                        break;
+                    case "div":
+                        node.AddClass("row mb-3 justify-content-center");
+                        break;
+                    case "iframe":
+                        node.AddClass("ratio ratio-16x9");
                         break;
                     default:
                         break;
@@ -131,35 +143,46 @@ namespace NewsAgregator.Buisness.Parsers
         }
 
         private static void ExtractMedia(HtmlNode parentNode)
-        {   
-            var nodesWithImage = parentNode.SelectNodes(".//div[contains(concat(\" \", normalize-space(@class), \" \"), \" news-media \")]");
-            if (nodesWithImage == null)
+        {
+            var swipers = parentNode.SelectNodes(".//div[contains(concat(\" \", normalize-space(@class), \" \"), \" news-media__gallery \")]");
+            if (swipers != null)
             {
-                return;
-            }
-            foreach (var node in nodesWithImage)
-            {
-                if (node.SelectSingleNode(".//img | .//iframe").ParentNode.Name.Equals("a"))
+                foreach(var swiper in swipers)
                 {
-                    node.Remove();
-                    continue;
-                }
-                if(node.SelectNodes(".//div[contains(concat(\" \", normalize-space(@class),\" \"), \" js-swiper \")]") != null)
-                {
-                    var images = node.SelectNodes(".//img");
-                    images[^1].Remove();
-                    images[^1].Remove();
+                    var swiperImages = swiper.SelectNodes(".//img");
                     var newDiv = "";
-                    foreach(var image in images)
+                    for(int i = 0; i < swiperImages.Count - 2; i++)
                     {
-                        newDiv += image.OuterHtml;
+                        newDiv += swiperImages[i].ParentNode.OuterHtml;
                     }
-                    node.InnerHtml = newDiv;
+                    swiper.InnerHtml = newDiv;
                 }
-                else
+            }
+            var adds = parentNode.SelectNodes(".//a//img");
+            if(adds != null)
+            {
+                foreach(var add in adds)
                 {
-                    node.InnerHtml = node.SelectSingleNode(".//img | .//iframe").OuterHtml;
+                    var pNode = add;
+                    while(pNode.ParentNode != parentNode)
+                    {
+                        pNode = pNode.ParentNode;
+                    }
+                    pNode.Remove();
                 }
+            }
+            //todo manage subtitles
+            //todo too man divs
+            var images = parentNode.SelectNodes(".//img[contains(concat(\" \", normalize-space(@class), \" \"), \" news-media__image \")] | .//iframe");
+            if(images == null) return;
+            foreach(var img in images)
+            {
+                var pNode = img.ParentNode;
+                while(pNode.ParentNode != parentNode)
+                {
+                    pNode = pNode.ParentNode; 
+                }
+                parentNode.RemoveChild(pNode, true);
             }
         }
 

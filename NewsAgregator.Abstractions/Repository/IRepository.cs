@@ -26,6 +26,7 @@ namespace NewsAgregator.Abstractions.Repository
         Task Remove(Guid id);
         void RemoveRange(IEnumerable<T> entities);
 
+        //utils
         Task<int> CountAsync();
     }
 }

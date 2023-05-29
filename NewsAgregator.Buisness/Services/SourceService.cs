@@ -17,7 +17,7 @@ namespace NewsAgregator.Buisness.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Guid> Create(SourceDto source)
+        public async Task<Guid> CreateAsync(SourceDto source)
         {
             await _unitOfWork.Sources.AddAsync(_mapper.Map<Source>(source));
             await _unitOfWork.CommitAsync();

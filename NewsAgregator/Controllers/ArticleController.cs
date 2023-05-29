@@ -48,9 +48,9 @@ namespace NewsAgregator.Mvc.Controllers
                 {
                     PageSize = pageSize,
                     PageNumber = page,
-                    PageAmount = await _articleService.GetPageAmount(pageSize)
+                    PageAmount = (await _articleService.CountAsync() + pageSize - 1) / pageSize 
                 };
-                var articles = await _articleService.GetArticlesByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
+                var articles = await _articleService.GetByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
                 var viewModel = new ArticleViewByPageModel
                 {
                     Articles = articles.Select(article => _mapper.Map<ArticleModel>(article)).ToList(),
@@ -71,7 +71,7 @@ namespace NewsAgregator.Mvc.Controllers
         {
             try
             {
-                var article = await _articleService.GetArticleDetailAsync(id);
+                var article = await _articleService.GetDetailAsync(id);
                 var comments = _commentService.GetCommentsByArticleId(article.Id);
                 var viewModel = _mapper.Map<ArticleDetailModel>(article);
                 viewModel.Comments = comments.ToList();
@@ -122,7 +122,7 @@ namespace NewsAgregator.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> LoadArticles()
         {
-            await _articleService.LoadArticlesFromSources();
+            await _articleService.LoadFromSourcesAsync();
             return RedirectToAction("Index");
         }
     }

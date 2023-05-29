@@ -37,7 +37,7 @@ namespace NewsAgregator.Mvc.Controllers
             {
                 var sourceCreate = _mapper.Map<SourceDto>(source);
                 sourceCreate.Id = Guid.NewGuid();
-                await _sourceService.Create(sourceCreate);
+                await _sourceService.CreateAsync(sourceCreate);
             }
             return RedirectToAction("Index");
         }

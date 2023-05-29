@@ -43,7 +43,7 @@ namespace NewsAgregator.Buisness.Services
         {
             return _mapper.Map<RoleDto>(await _unitOfWork.Roles.GetByIdAsync(id));
         }
-        public async Task Update(RoleDto role)
+        public async Task UpdateAsync(RoleDto role)
         {
             var roles = _unitOfWork.Roles.FindBy(roleDb => roleDb.Name.Equals(role.Name));
             if (roles.Count() > 1 | (roles.Any() && roles.First().Id != role.Id))

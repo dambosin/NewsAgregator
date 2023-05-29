@@ -7,9 +7,9 @@ namespace NewsAgregator.Abstractions.Services
     {
         UserDto GetUser(string login);
         Task<UserDto> GetUserByIdAsync(Guid id);
-        Task<ClaimsIdentity> LoginUser(string login, string password);
-        Task<Guid> RegisterUser(UserDto user);
-        public bool IsLoginAvailiable(string login);
-        public bool IsEmailAvailiable(string email);
+        Task<ClaimsIdentity> LoginUserAsync(string login, string password);
+        Task<Guid> RegisterUserAsync(UserDto user);
+        bool IsLoginAvailiable(string login);
+        bool IsEmailAvailiable(string email);
     }
 }

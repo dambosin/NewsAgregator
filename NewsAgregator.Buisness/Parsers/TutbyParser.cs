@@ -5,9 +5,9 @@ namespace NewsAgregator.Buisness.Parsers
 {
     public class TutbyParser : ISiteParser
     {
-        public Task<List<ArticleCreateDto>> Parse(SourceDto source)
+        public List<ArticleCreateDto> Parse(SourceDto source)
         {
-            return Task.FromResult(new List<ArticleCreateDto>());
+            return new List<ArticleCreateDto>();
         }
     }
 }

@@ -57,7 +57,7 @@ namespace NewsAgregator.Mvc.Controllers
         {
             await HttpContext.SignInAsync(
                                 CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(await _userService.LoginUser(model.Login, model.Password)));  
+                                new ClaimsPrincipal(await _userService.LoginUserAsync(model.Login, model.Password)));  
             
         }
 
@@ -84,7 +84,7 @@ namespace NewsAgregator.Mvc.Controllers
                 {
                     throw new InvalidDataException($"Register model isn't valid. {model}");
                 }
-                await _userService.RegisterUser(_mapper.Map<UserDto>(model));
+                await _userService.RegisterUserAsync(_mapper.Map<UserDto>(model));
                 await LoginUser(_mapper.Map<LoginModel>(model));
                 return RedirectToAction("index", "home");
 

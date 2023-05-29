@@ -48,7 +48,7 @@ namespace NewsAgregator.Buisness.Services
             var user = await _unitOfWork.Users.GetByIdAsync(id);
             return _mapper.Map<UserDto>(user);
         }
-        public async Task<ClaimsIdentity> LoginUser(string login, string password)
+        public async Task<ClaimsIdentity> LoginUserAsync(string login, string password)
         {
             const string AuthType = "Application Cookie";
             if (!IsLoginAvailiable(login))
@@ -79,7 +79,7 @@ namespace NewsAgregator.Buisness.Services
             }
             throw new InvalidDataException("Invalid login or password");
         }
-        public async Task<Guid> RegisterUser(UserDto user)
+        public async Task<Guid> RegisterUserAsync(UserDto user)
         {
             if (!IsLoginAvailiable(user.Login))
             {
