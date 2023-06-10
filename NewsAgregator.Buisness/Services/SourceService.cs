@@ -8,13 +8,13 @@ namespace NewsAgregator.Buisness.Services
 {
     public class SourceService : ISourceService
     {
-        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public SourceService(IMapper mapper, IUnitOfWork unitOfWork)
+        public SourceService( IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         public async Task<Guid> CreateAsync(SourceDto source)
@@ -31,12 +31,6 @@ namespace NewsAgregator.Buisness.Services
                 .Select(source =>
                     _mapper.Map<SourceDto>(source))
                 .ToList();
-        }
-
-        private async Task<bool> IsSourceExistAsync(Guid id)
-        {
-            var article = await _unitOfWork.Sources.GetByIdAsync(id);
-            return article != null;
         }
     }
 }

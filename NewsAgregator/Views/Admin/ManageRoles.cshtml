@@ -19,6 +19,7 @@
                     <th scope="row">@(i++)</th>
                     <td><a class="btn btn-outline-primary" asp-controller="Admin" asp-action="UpdateRole" asp-route-id="@role.Id">@role.Name</a></td>
                     <td>@role.Id</td>
+                    <td><form asp-action="RemoveRole" asp-controller="admin" asp-route-id="@role.Id" method="post"><button class="btn btn-primary" type="submit">Remove</button></form></td>
                 </tr>
 
             }

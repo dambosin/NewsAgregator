@@ -4,7 +4,6 @@ using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
-using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -16,79 +15,63 @@ namespace NewsAgregator.Buisness.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IConfiguration _config;
-        private readonly Serilog.ILogger _logger;
 
         public UserService(
-            IConfiguration config,
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            Serilog.ILogger logger)
+            IConfiguration config)
         {
-            _config = config;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _logger = logger;
+            _config = config;
         }
 
-        public UserDto GetUser(string login)
+        public virtual UserDto GetUserByLogin(string login)
         {
-            if (IsLoginAvailiable(login))
-            {
-                throw new KeyNotFoundException($"User with login : {login} doesn't exist.");
-            }
-            var user = _unitOfWork.Users.FindBy(user => user.Login == login).First();
-            return _mapper.Map<UserDto>(user);
+            var users = _unitOfWork.Users.FindBy(user => user.Login == login);
+            if (!users.Any())
+                throw new ArgumentException($"User with login : {login} doesn't exist.");
+            return _mapper.Map<UserDto>(users.First());
         }
         public async Task<UserDto> GetUserByIdAsync(Guid id)
         {
-            if (!await IsUserExist(id))
-            {
-                throw new KeyNotFoundException($"User with guid : {id} doesn't exist.");
-            }
             var user = await _unitOfWork.Users.GetByIdAsync(id);
+            if (user == null)
+                throw new ArgumentException($"User with guid : {id} doesn't exist.");
             return _mapper.Map<UserDto>(user);
         }
-        public async Task<ClaimsIdentity> LoginUserAsync(string login, string password)
+        public ClaimsIdentity LoginUser(string login, string password)
         {
             const string AuthType = "Application Cookie";
-            if (!IsLoginAvailiable(login))
-            {
-                var user = GetUser(login);
-                if (IsPasswordCorrect(password, user.PasswordHash))
+            var user = GetUserByLogin(login);
+            if (user == null)
+                throw new ArgumentException($"{login} is not registered.");
+            if (!IsPasswordCorrect(password, user.PasswordHash))
+                throw new ArgumentException("Invalid password");
+            var claims = new List<Claim>
                 {
-                    var claims = new List<Claim>
-                    {
-                        new Claim(ClaimsIdentity.DefaultNameClaimType, login),
-                    };
-                    var userRoles = _unitOfWork.UserRoles
-                        .FindBy(userRole => userRole.UserId == user.Id, user => user.Role)
-                        .Select(uRole => _mapper.Map<UserRoleDto>(uRole))
-                        .ToList();
-                    foreach (var role in userRoles)
-                    {
-                        claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Role.Name));
-                    }
-
-                    var identity = new ClaimsIdentity(
-                        claims,
-                        AuthType,
-                        ClaimsIdentity.DefaultNameClaimType,
-                        ClaimsIdentity.DefaultRoleClaimType);
-                    return identity;
-                }
+                    new Claim(ClaimsIdentity.DefaultNameClaimType, login),
+                };
+            var userRoles = _unitOfWork.UserRoles
+                .FindBy(userRole => userRole.UserId == user.Id, userRole => userRole.Role)
+                .Select(uRole => _mapper.Map<UserRoleDto>(uRole))
+                .ToList();
+            foreach (var role in userRoles)
+            {
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Role.Name));
             }
-            throw new InvalidDataException("Invalid login or password");
+
+            var identity = new ClaimsIdentity(
+                claims,
+                AuthType);
+            return identity;
         }
         public async Task<Guid> RegisterUserAsync(UserDto user)
         {
             if (!IsLoginAvailiable(user.Login))
-            {
-                throw new Exception($"User with login : {user.Login} already exist.");
-            }
+                throw new InvalidDataException($"User with login : {user.Login} already exist.");
             if (!IsEmailAvailiable(user.Email))
-            {
-                throw new Exception($"User with email : {user.Email} already exist.");
-            }
+                throw new InvalidDataException($"User with email : {user.Email} already exist.");
             user.PasswordHash = GetPasswordHash(user.Password);
             var userRole = new UserRoleDto
             {
@@ -101,11 +84,11 @@ namespace NewsAgregator.Buisness.Services
             return user.Id;
 
         }
-        public bool IsLoginAvailiable(string login)
+        public virtual bool IsLoginAvailiable(string login)
         {
             return !_unitOfWork.Users.FindBy(user => user.Login.ToLower() == login.ToLower()).Any();
         }
-        public bool IsEmailAvailiable(string email)
+        public virtual bool IsEmailAvailiable(string email)
         {
             return !_unitOfWork.Users.FindBy(user => user.Email == email).Any();
 
@@ -130,13 +113,14 @@ namespace NewsAgregator.Buisness.Services
             }
             return sb.ToString();
         }
-        private async Task<bool> IsUserExist(Guid id)
-        {
-            return await _unitOfWork.Users.GetByIdAsync(id) != null;
-        }
         private bool IsPasswordCorrect(string password, string passwordHash)
         {
             return GetPasswordHash(password).Equals(passwordHash);
+        }
+
+        public List<UserDto> GetUsers()
+        {
+            return _unitOfWork.Users.GetAsQueryable().Select(user => _mapper.Map<UserDto>(user)).ToList();
         }
     }
 }

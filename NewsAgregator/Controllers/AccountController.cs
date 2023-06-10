@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models.Accounts;
+using OpenQA.Selenium.Internal;
 using System.Security.Claims;
 
 namespace NewsAgregator.Mvc.Controllers
@@ -57,7 +59,7 @@ namespace NewsAgregator.Mvc.Controllers
         {
             await HttpContext.SignInAsync(
                                 CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(await _userService.LoginUserAsync(model.Login, model.Password)));  
+                                new ClaimsPrincipal(_userService.LoginUser(model.Login, model.Password)));  
             
         }
 
@@ -95,6 +97,14 @@ namespace NewsAgregator.Mvc.Controllers
                 _logger.Error(ex.Message);
                 throw;
             }
+        }
+        [HttpGet]
+        [Authorize]
+        public IActionResult User([FromRoute]string login)
+        {
+            var user = _userService.GetUserByLogin(login);
+            if(user == null) return NotFound();
+            return View();
         }
     }
 }

@@ -23,7 +23,7 @@ namespace NewsAgregator.Abstractions.Repository
         void PatchAsync(Guid id, List<PatchDto> patches);
 
         //remove
-        Task Remove(Guid id);
+        Task RemoveAsync(Guid id);
         void RemoveRange(IEnumerable<T> entities);
 
         //utils

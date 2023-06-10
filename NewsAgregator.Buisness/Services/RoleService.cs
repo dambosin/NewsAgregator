@@ -20,7 +20,7 @@ namespace NewsAgregator.Buisness.Services
             _mapper = mapper;
         }
 
-        public async Task<Guid> CreateAsyc(RoleDto role)
+        public async Task<Guid> CreateAsync(RoleDto role)
         {
             if (!IsNameAvailable(role.Name))
             {
@@ -39,19 +39,26 @@ namespace NewsAgregator.Buisness.Services
             return _unitOfWork.Roles.GetAsQueryable().Select(role => _mapper.Map<RoleDto>(role)).ToList();
         }
 
-        public async Task<RoleDto?> GetByIdAsync(Guid id)
+        public async Task<RoleDto> GetByIdAsync(Guid id)
         {
-            return _mapper.Map<RoleDto>(await _unitOfWork.Roles.GetByIdAsync(id));
+            var role = await _unitOfWork.Roles.GetByIdAsync(id);
+            if(role == null) 
+                throw new ArgumentException($"Role with id = {id} doesn't exist"); 
+            return _mapper.Map<RoleDto>(role);
         }
         public async Task UpdateAsync(RoleDto role)
         {
             var roles = _unitOfWork.Roles.FindBy(roleDb => roleDb.Name.Equals(role.Name));
-            if (roles.Count() > 1 | (roles.Any() && roles.First().Id != role.Id))
-            {
-                throw new InvalidDataException();
-            }
+            if (roles.Any() && roles.First().Id != role.Id) 
+                throw new InvalidDataException($"Role with name = {role.Name} already exist");
             _unitOfWork.Roles
                 .Update(_mapper.Map<Role>(role));
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            await _unitOfWork.Roles.RemoveAsync(id);
             await _unitOfWork.CommitAsync();
         }
     }

@@ -49,7 +49,7 @@ namespace NewsAgregator.Repository.Implemintation
         }
 
         public void RemoveRange(IEnumerable<T> entities) => _dbset.RemoveRange(entities);
-        public async Task Remove(Guid id) => _dbset
+        public async Task RemoveAsync(Guid id) => _dbset
             .Remove(await _dbset
                 .FirstOrDefaultAsync(entity => entity.Id == id));
 

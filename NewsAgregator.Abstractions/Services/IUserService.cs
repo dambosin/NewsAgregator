@@ -5,11 +5,12 @@ namespace NewsAgregator.Abstractions.Services
 {
     public interface IUserService
     {
-        UserDto GetUser(string login);
+        UserDto GetUserByLogin(string login);
         Task<UserDto> GetUserByIdAsync(Guid id);
-        Task<ClaimsIdentity> LoginUserAsync(string login, string password);
+        ClaimsIdentity LoginUser(string login, string password);
         Task<Guid> RegisterUserAsync(UserDto user);
         bool IsLoginAvailiable(string login);
         bool IsEmailAvailiable(string email);
+        List<UserDto> GetUsers();
     }
 }

@@ -50,7 +50,7 @@ namespace NewsAgregator.Mvc.Controllers
                     PageNumber = page,
                     PageAmount = (await _articleService.CountAsync() + pageSize - 1) / pageSize 
                 };
-                var articles = await _articleService.GetByPageAsync(pageInfo.PageNumber, pageInfo.PageSize);
+                var articles = _articleService.GetByPage(pageInfo.PageNumber, pageInfo.PageSize);
                 var viewModel = new ArticleViewByPageModel
                 {
                     Articles = articles.Select(article => _mapper.Map<ArticleModel>(article)).ToList(),
@@ -110,7 +110,6 @@ namespace NewsAgregator.Mvc.Controllers
             if (ModelState.IsValid)
             {
                 articleCreate.Id = Guid.NewGuid();
-                //TODO: create positive index calculator
                 articleCreate.PositiveIndex = 0;
                 articleCreate.Created = DateTime.Now;
                 articleCreate.LikesCount = 0;

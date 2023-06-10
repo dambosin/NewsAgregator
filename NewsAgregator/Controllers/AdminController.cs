@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models.Roles;
+using NewsAgregator.Mvc.Models.Users;
 
 namespace NewsAgregator.Mvc.Controllers
 {
@@ -15,15 +16,18 @@ namespace NewsAgregator.Mvc.Controllers
         private readonly Serilog.ILogger _logger;
         private readonly IMapper _mapper;
         private readonly IRoleService _roleService;
+        private readonly IUserService _userService;
 
         public AdminController(
             Serilog.ILogger logger,
             IMapper mapper,
-            IRoleService roleService) 
-        { 
+            IRoleService roleService,
+            IUserService userService)
+        {
             _logger = logger;
             _mapper = mapper;
             _roleService = roleService;
+            _userService = userService;
         }
         public IActionResult Index()
         {
@@ -35,6 +39,19 @@ namespace NewsAgregator.Mvc.Controllers
             try
             {
                 var model = new RolesViewModel { Roles = _roleService.GetRoles() };
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+        public IActionResult ManageUsers()
+        {
+            try
+            {
+                var model = new UsersViewModel { Users = _userService.GetUsers()};
                 return View(model);
             }
             catch (Exception ex)
@@ -57,7 +74,7 @@ namespace NewsAgregator.Mvc.Controllers
                 {
                     throw new InvalidDataException("Model is not correct");
                 }
-                await _roleService.CreateAsyc(_mapper.Map<RoleDto>(model));
+                await _roleService.CreateAsync(_mapper.Map<RoleDto>(model));
                 return RedirectToAction("ManageRoles");
             }
             catch (Exception ex)
@@ -93,6 +110,21 @@ namespace NewsAgregator.Mvc.Controllers
                 return RedirectToAction("ManageRoles");
             }
             catch(Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RemoveRole([FromRoute]Guid id)
+        {
+            try
+            {
+                var role = await _roleService.GetByIdAsync(id) ?? throw new InvalidDataException($"Role with id {id} is not exist");
+                await _roleService.DeleteAsync(id);
+                return RedirectToAction("ManageRoles");
+            }catch (Exception ex)
             {
                 _logger.Error(ex.Message);
                 throw;

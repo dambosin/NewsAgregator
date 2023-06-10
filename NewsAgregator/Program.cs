@@ -17,6 +17,11 @@ namespace NewsAgregator
     {
         public static void Main(string[] args)
         {
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                .Build();
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<NewsAgregatorContext>(
                 opt =>
@@ -25,11 +30,11 @@ namespace NewsAgregator
                         .GetConnectionString("DefaultConnection");
                     opt.UseSqlServer(connString);
                 });
-
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.File("./log.txt")
+                .ReadFrom.Configuration(configuration)
                 .CreateLogger();
+            builder.Host.UseSerilog();
+
             builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
 
             builder.Services.AddScoped<ISiteParser, OnlinerParser>();
@@ -48,7 +53,7 @@ namespace NewsAgregator
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             
-            builder.Services.AddTransient<IArticleService, AricleSrvice>();
+            builder.Services.AddTransient<IArticleService, ArticleSrvice>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IUserService, UserService>();

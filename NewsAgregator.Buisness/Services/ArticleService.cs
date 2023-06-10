@@ -9,15 +9,17 @@ using NewsAgregator.Buisness.Models;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using Newtonsoft.Json;
+using Serilog;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
-using ILogger = Serilog.ILogger;
+
 
 namespace NewsAgregator.Buisness.Services
 {
-
-    public class AricleSrvice : IArticleService
+    //todo: rpeort comment- article
+    //todo: admin report handler page
+    public class ArticleSrvice : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -25,7 +27,7 @@ namespace NewsAgregator.Buisness.Services
         private readonly ISiteParserFactory _parserFactory;
         private readonly IConfiguration _configuration;
 
-        public AricleSrvice(
+        public ArticleSrvice(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ILogger logger,
@@ -41,25 +43,32 @@ namespace NewsAgregator.Buisness.Services
 
         public async Task<int> CountAsync() => await _unitOfWork.Articles.CountAsync();
 
-        public async Task<IEnumerable<ArticleDto>> GetByPageAsync(int pageNumber, int pageSize)
+        public IEnumerable<ArticleDto> GetByPage(int pageNumber, int pageSize)
         {
-            return await _unitOfWork.Articles
-                .GetAsQueryable()
+            var articles = _unitOfWork.Articles.GetAsQueryable();
+            if (pageSize < 1) throw new ArgumentOutOfRangeException($"Page size must be 1 or higher. pageSize = {pageSize}");
+            
+            if (pageNumber < 1) 
+                throw new ArgumentOutOfRangeException($"Page number must be 1 or higher. pageNumber = {pageNumber}");
+
+            var maxPage = Math.Ceiling(articles.Count() / (double)pageSize);
+            if (maxPage < pageNumber) 
+                throw new ArgumentOutOfRangeException($"Page number must be same or lower than last pagee. pageNumber = {pageNumber}, last page = {maxPage}");
+            
+            return articles
                 .OrderByDescending(article => article.Created)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(article =>
                     _mapper.Map<ArticleDto>(article))
-                .ToListAsync();
+                .ToList();
         }
 
         public async Task<ArticleDto> GetDetailAsync(Guid id)
         {
-            if (!await IsArticleExistAsync(id))
-            {
-                throw new KeyNotFoundException($"Article with id {id} doesn't exist");
-            }
             var article = await _unitOfWork.Articles.GetByIdAsync(id);
+            if (article == null)
+                throw new ArgumentException($"Article with id = {id} doesn't exist");
             return _mapper.Map<ArticleDto>(article);
         }
 
@@ -68,11 +77,6 @@ namespace NewsAgregator.Buisness.Services
             await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(article));
             await _unitOfWork.CommitAsync();
             return article.Id;
-        }
-        private async Task<bool> IsArticleExistAsync(Guid id)
-        {
-            var article = await _unitOfWork.Articles.GetByIdAsync(id);
-            return article != null;
         }
         public async Task<int> LoadFromSourcesAsync()
         {
