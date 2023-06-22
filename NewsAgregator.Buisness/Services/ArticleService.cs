@@ -1,20 +1,14 @@
 ﻿using AutoMapper;
 using HtmlAgilityPack;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using NewsAgregator.Abstractions;
 using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
-using NewsAgregator.Buisness.Models;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
-using Newtonsoft.Json;
 using Serilog;
 using System.Linq.Expressions;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-
+using System.Text.RegularExpressions;
 
 namespace NewsAgregator.Buisness.Services
 {
@@ -29,19 +23,25 @@ namespace NewsAgregator.Buisness.Services
         private readonly ILogger _logger;
         private readonly ISiteParserFactory _parserFactory;
         private readonly IConfiguration _configuration;
+        private readonly ISourceService _sourceService;
+        private readonly IRateService _rateService;
 
         public ArticleSrvice(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ILogger logger,
             ISiteParserFactory parserFactory,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ISourceService sourceService,
+            IRateService rateService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _parserFactory = parserFactory;
             _configuration = configuration;
+            _sourceService = sourceService;
+            _rateService = rateService;
         }
 
         public async Task<int> CountAsync() => await _unitOfWork.Articles.CountAsync();
@@ -91,7 +91,17 @@ namespace NewsAgregator.Buisness.Services
         }
         public async Task<int> LoadFromSourcesAsync()
         {
-            var sources = await _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToListAsync();
+            var sources = _sourceService.GetSources();
+            foreach(var source in sources)
+            {
+                var articles = _parserFactory.GetInstance(source.Name).Parse(source);
+                var allArticlesOriginalId = GetArticlesOriginalIds();
+                articles = articles.Where(article => !allArticlesOriginalId.Any(id => id.Equals(article.IdOnSite))).ToList();
+                await _unitOfWork.Articles.AddRangeAsync(articles
+                    .Select(article => _mapper.Map<Article>(article)));
+            }
+            return await _unitOfWork.CommitAsync();
+            /*var sources = await _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToListAsync();
             var articles = new List<ArticleDto>();
             foreach (var source in sources)
             {
@@ -104,109 +114,42 @@ namespace NewsAgregator.Buisness.Services
             }
             await _unitOfWork.Articles.AddRangeAsync(articles.Select(article => _mapper.Map<Article>(article)));
             await _unitOfWork.CommitAsync();
-            return articles.Count;
+            return articles.Count;*/
         }
-        public async Task<double> RateTextAsync(string text)
+        public async Task RateArticlesAsync()
         {
-            Dictionary<string, int> lemmaRates = new();
-            using (StreamReader reader = new("D:\\Projects\\NewsAgregator\\NewsAgregator\\bin\\Debug\\net6.0\\AFINN-ru.json"))
+            var articlesToRate = _unitOfWork.Articles
+                .GetAsQueryable()
+                .Where(article => article.PositiveIndex == -10)
+                .ToList();
+            articlesToRate = await Rate(articlesToRate);
+            foreach(var article in articlesToRate)
             {
-                string json = await reader.ReadToEndAsync();
-                lemmaRates = JsonConvert.DeserializeObject<Dictionary<string, int>>(json);
+                _unitOfWork.Articles.Update(article);
             }
-            var lemmas = new List<LemmaResponse>();
-            using (var httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:7288/")
-            })
-            {
-
-                httpClient.DefaultRequestHeaders.Accept.Clear();
-                httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var request = new HttpRequestMessage(HttpMethod.Post,
-                    $"http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey={_configuration["Secrets:TextErra:ApiKey"]}")
-                {
-                    Content = new StringContent("[{\"text\":\"" + text + "\"}]",
-                                Encoding.UTF8,
-                                "application/json")
-                };
-                var response = await httpClient.SendAsync(request);
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    _logger.Warning(response.ReasonPhrase + " " + response.RequestMessage!.ToString());
-                    return -10.0;
-                }
-                var responseString = await response.Content.ReadAsStringAsync();
-                lemmas = JsonConvert.DeserializeObject<List<LemmaResponse>>(responseString);
-            }
-            double rate = 0;
-            var lemmasCount = 0;
-            foreach (var lemma in lemmas[0].Annotations.Lemma)
-            {
-                if (!lemmaRates.ContainsKey(lemma.Value!)) continue;
-                rate += lemmaRates[lemma.Value!];
-                lemmasCount++;
-            }
-            return ConvertToLocalRate(rate / lemmasCount);
+            await _unitOfWork.CommitAsync();
         }
-        public Task Rate(ArticleDto article)
+       
+        public async Task<double> Rate(Article article)
         {
-            throw new NotImplementedException();
+            return await _rateService.Rate(article.PlainText);
         }
-        public async Task Rate(List<ArticleDto> articles)
+        public async Task<List<Article>> Rate(List<Article> articles)
         {
             foreach (var article in articles)
             {
-                await Rate(article);
+                article.PositiveIndex = await Rate(article);
             }
+            return articles;
         }
         public List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression)
         {
             throw new NotImplementedException();
         }
-        public async Task ReRateArticles()
+        
+        private List<string> GetArticlesOriginalIds()
         {
-            var articles = _unitOfWork.Articles.GetAsQueryable().ToList();
-            foreach (var article in articles)
-            {
-                article.PositiveIndex = ConvertToLocalRate(article.PositiveIndex);
-                _unitOfWork.Articles.Update(article);
-            }
-            await _unitOfWork.CommitAsync();
-        }
-
-
-
-        private static string ConvertHtmlToText(string html)
-        {
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            var text = "";
-            foreach (var node in htmlDoc.DocumentNode.SelectNodes("./p"))
-            {
-                text += node.InnerText;
-            }
-            return text;
-        }
-        private double ConvertToLocalRate(double rate)
-        {
-            int.TryParse(_configuration["Rating:MaxRate"], out var MaxRate);
-            int.TryParse(_configuration["Rating:MinRate"], out var MinRate);
-            int.TryParse(_configuration["Rating:MaxInputRate"], out var MaxInputRate);
-            int.TryParse(_configuration["Rating:MinInputRate"], out var MinInputRate);
-            int.TryParse(_configuration["Rating:RateRank"], out var RateRank);
-
-            if (rate >= MaxInputRate) return MaxRate;
-            if (rate <= MinInputRate) return MinRate;
-
-            var result = (rate - MinInputRate);//to start from zero
-            result /= (MaxInputRate - MinInputRate);//percantage of value
-            result *= (MaxRate - MinRate);//convert to new rate system
-            result *= Math.Pow(10, RateRank);//save RateRank numbers after dot as integer
-            result = Math.Ceiling(result) / Math.Pow(10, RateRank);//rounding value and restoring it's view
-
-            return result;
-        }
+            return _unitOfWork.Articles.GetAsQueryable().Select(article => article.IdOnSite).ToList();
+        }   
     }
 }

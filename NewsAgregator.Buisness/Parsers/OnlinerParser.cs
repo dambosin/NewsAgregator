@@ -5,6 +5,7 @@ using NewsAgregator.Abstractions;
 using NewsAgregator.Core.Dto;
 using System.ServiceModel.Syndication;
 using System.Xml;
+using System.Text.RegularExpressions;
 
 namespace NewsAgregator.Buisness.Parsers
 {
@@ -35,7 +36,8 @@ namespace NewsAgregator.Buisness.Parsers
                     doc.LoadHtml(news);
                     var content = SelectNode(doc, "//div[contains(concat(\" \", normalize-space(@class), \" \"), \" news-text \")]");
                     var endNode = SelectNode(content, "./div[@id=\"news-text-end\"] | ./hr");
-                    endNode ??= SelectNode(content, "./*[@style = \"text-align: right;\"]").PreviousSibling;
+                    endNode ??= SelectNode(content, "./*[@style = \"text-align: right;\"]")?.PreviousSibling;
+                    if (endNode == null) continue;
                     RemoveEndNodes(endNode);
                     RemoveNodes(content, "./text() | ./script | ./div[not(contains(concat(\" \", normalize-space(@class), \" \"), \" news-media \"))] | ./p[@style]");
                     RemoveNodes(content, "./p/a | ./a", node => node.InnerText.Equals("") || node.InnerText.Equals("\r\n\r\n") || node.HasClass("news-banner"));
@@ -43,6 +45,14 @@ namespace NewsAgregator.Buisness.Parsers
                     ExtractMedia(content);
                     AddClassesToHtml(content);
                     var header = ExtractHeaderImage(doc);
+                    var TextNodes = content.SelectNodes("//p/text()");
+                    var plainText = "";
+                    foreach ( var node in TextNodes)
+                    {
+                        plainText += node.OuterHtml + ". ";
+                    }
+                    plainText = Regex.Replace(plainText, @"[\r\n\t]", "");
+
 
                     //Manage rss item
                     var doc2 = new HtmlDocument();
@@ -59,9 +69,7 @@ namespace NewsAgregator.Buisness.Parsers
                         Title = item.Title.Text,
                         ShortDescription = description.FirstChild.InnerHtml,
                         Content = content.InnerHtml,
-                        PositiveIndex = 0,
-                        Created = DateTime.Now,
-                        LikesCount = 0,
+                        PlainText = plainText,
                         SourceId = source.Id,
                         IdOnSite = item.Id
                     };
@@ -172,6 +180,7 @@ namespace NewsAgregator.Buisness.Parsers
             foreach(var img in images)
             {
                 var pNode = img.ParentNode;
+                if (pNode == parentNode) continue;
                 while(pNode.ParentNode != parentNode)
                 {
                     pNode = pNode.ParentNode; 
@@ -190,7 +199,7 @@ namespace NewsAgregator.Buisness.Parsers
         }
         private static void RemoveNodes(HtmlNode parentNode, string xpath, Func<HtmlNode, bool> predicate)
         {
-            var nodesForDelete = parentNode.SelectNodes(xpath).Where(predicate);
+            var nodesForDelete = parentNode.SelectNodes(xpath)?.Where(predicate);
             if (nodesForDelete != null)
             {
                 foreach(var node in nodesForDelete)

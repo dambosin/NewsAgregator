@@ -118,16 +118,10 @@ namespace NewsAgregator.Mvc.Controllers
             await _articleService.LoadFromSourcesAsync();
             return RedirectToAction("Index");
         }
-        [HttpGet]
-        public IActionResult ReRateArticles()
-        {
-            return View();
-        }
         [HttpPost]
-        public async Task<IActionResult> ReRateArticles(bool confirm = true)
+        public async Task<IActionResult> RateArticles()
         {
-            if (!confirm) throw new NotImplementedException();
-            await _articleService.ReRateArticles();
+            await _articleService.RateArticlesAsync();
             return RedirectToAction("Index");
         }
     }

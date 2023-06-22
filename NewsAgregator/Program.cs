@@ -58,6 +58,7 @@ namespace NewsAgregator
             builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IRoleService, RoleService>();
+            builder.Services.AddTransient<IRateService, RateService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
 
