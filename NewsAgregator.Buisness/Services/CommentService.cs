@@ -16,15 +16,24 @@ namespace NewsAgregator.Buisness.Services
             _mapper = mapper;
         }
 
-        public IQueryable<CommentDto> GetCommentsByArticleId(Guid articleId)
+        public Task<Guid> CreateAsync(CommentDto commentDto)
         {
-            return _unitOfWork.Comments
-                .FindBy(
-                comment => comment.ArticleId == articleId,
-                comment => comment.User)
-                .Select(comment =>
-                    _mapper.Map<CommentDto>(comment))
-                .AsQueryable();
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task Update(CommentDto commentDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        List<CommentDto> ICommentService.GetCommentsByArticleId(Guid articleId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -5,9 +5,9 @@ namespace NewsAgregator.Buisness.Parsers
 {
     public class DtfParseer : ISiteParser
     {
-        public List<ArticleCreateDto> Parse(SourceDto source)
+        public List<ArticleDto> Parse(SourceDto source)
         {
-            return new List<ArticleCreateDto>();
+            return new List<ArticleDto>();
         }
     }
 }

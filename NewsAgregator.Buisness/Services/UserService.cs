@@ -4,6 +4,7 @@ using NewsAgregator.Abstractions.Repository;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
+using NewsAgregator.Data.Migrations;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -40,7 +41,7 @@ namespace NewsAgregator.Buisness.Services
                 throw new ArgumentException($"User with guid : {id} doesn't exist.");
             return _mapper.Map<UserDto>(user);
         }
-        public ClaimsIdentity LoginUser(string login, string password)
+        public async Task<ClaimsIdentity> LoginUser(string login, string password)
         {
             const string AuthType = "Application Cookie";
             var user = GetUserByLogin(login);
@@ -53,12 +54,17 @@ namespace NewsAgregator.Buisness.Services
                     new Claim(ClaimsIdentity.DefaultNameClaimType, login),
                 };
             var userRoles = _unitOfWork.UserRoles
-                .FindBy(userRole => userRole.UserId == user.Id, userRole => userRole.Role)
+                .FindBy(userRole => userRole.UserId == user.Id)
                 .Select(uRole => _mapper.Map<UserRoleDto>(uRole))
                 .ToList();
-            foreach (var role in userRoles)
+            List<RoleDto> roles = new();
+            foreach(var userRole in userRoles)
             {
-                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Role.Name));
+                roles.Add(_mapper.Map<RoleDto>(await _unitOfWork.Roles.GetByIdAsync(userRole.RoleId)));
+            }
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimsIdentity.DefaultRoleClaimType, role.Name));
             }
 
             var identity = new ClaimsIdentity(
@@ -68,9 +74,9 @@ namespace NewsAgregator.Buisness.Services
         }
         public async Task<Guid> RegisterUserAsync(UserDto user)
         {
-            if (!IsLoginAvailiable(user.Login))
+            if (IsUserExistByLogin(user.Login))
                 throw new InvalidDataException($"User with login : {user.Login} already exist.");
-            if (!IsEmailAvailiable(user.Email))
+            if (IsUserExistByEmail(user.Email))
                 throw new InvalidDataException($"User with email : {user.Email} already exist.");
             user.PasswordHash = GetPasswordHash(user.Password);
             var userRole = new UserRoleDto
@@ -84,13 +90,13 @@ namespace NewsAgregator.Buisness.Services
             return user.Id;
 
         }
-        public virtual bool IsLoginAvailiable(string login)
+        public virtual bool IsUserExistByLogin(string login)
         {
-            return !_unitOfWork.Users.FindBy(user => user.Login.ToLower() == login.ToLower()).Any();
+            return _unitOfWork.Users.FindBy(user => user.Login.ToLower() == login.ToLower()).Any();
         }
-        public virtual bool IsEmailAvailiable(string email)
+        public virtual bool IsUserExistByEmail(string email)
         {
-            return !_unitOfWork.Users.FindBy(user => user.Email == email).Any();
+            return _unitOfWork.Users.FindBy(user => user.Email == email).Any();
 
         }
 
@@ -113,7 +119,7 @@ namespace NewsAgregator.Buisness.Services
             }
             return sb.ToString();
         }
-        private bool IsPasswordCorrect(string password, string passwordHash)
+        public bool IsPasswordCorrect(string password, string passwordHash)
         {
             return GetPasswordHash(password).Equals(passwordHash);
         }

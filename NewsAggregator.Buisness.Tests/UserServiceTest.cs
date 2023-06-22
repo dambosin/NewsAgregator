@@ -7,7 +7,6 @@ using NewsAgregator.Buisness.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using System.Linq.Expressions;
-using System.Net.Http.Headers;
 
 namespace NewsAggregator.Buisness.Tests
 {
@@ -103,8 +102,7 @@ namespace NewsAggregator.Buisness.Tests
             
             _unitOfWork.Setup(uow
                 => uow.UserRoles.FindBy(
-                    It.IsAny<Expression<Func<UserRole, bool>>>(),
-                    It.IsAny<Expression<Func<UserRole, object>>[]>()))
+                    It.IsAny<Expression<Func<UserRole, bool>>>()))
                 .Returns(new List<UserRole>()
                 {
                     new UserRole(),
@@ -115,7 +113,16 @@ namespace NewsAggregator.Buisness.Tests
                 => mapper.Map<UserRoleDto>(It.IsAny<UserRole>()))
                 .Returns(new UserRoleDto()
                 {
-                    Role  = new() { Name = "name"}
+                    RoleId = Guid.Empty
+                });
+            _unitOfWork.Setup(uow
+                => uow.Roles.GetByIdAsync(It.IsAny<Guid>()))
+                .ReturnsAsync(new Role());
+            _mapper.Setup(mapper
+                => mapper.Map<RoleDto>(It.IsAny<Role>()))
+                .Returns(new RoleDto()
+                {
+                    Name = "name"
                 });
             _config.Setup(cfg
                 => cfg["Secrets:Salt"])
@@ -141,7 +148,7 @@ namespace NewsAggregator.Buisness.Tests
             Assert.NotNull(result);
         }
         [Fact]
-        public void LoginUser_WrongEmail_ThrowArgumentException()
+        public async Task LoginUser_WrongEmail_ThrowArgumentException()
         {
             //arrange
             Mock<UserService> userServiceMock = new(() => new UserService(
@@ -158,11 +165,11 @@ namespace NewsAggregator.Buisness.Tests
             var userService = userServiceMock.Object;
 
             //act & assert
-            Assert.Throws<ArgumentException>(() 
+            await Assert.ThrowsAsync<ArgumentException>(() 
                 => userService.LoginUser("", ""));
         }
         [Fact]
-        public void LoginUser_WrongPassword_ThrowArgumentException()
+        public async Task LoginUser_WrongPassword_ThrowArgumentException()
         {
             //arrange
             const string passHash = "ef797c8118f02dfb649607dd5d3f8c7623048c9c063d532cc95c5ed7a898a64f";
@@ -187,7 +194,7 @@ namespace NewsAggregator.Buisness.Tests
             var userService = userServiceMock.Object;
 
             //act & assert
-            Assert.Throws<ArgumentException>(() 
+            await Assert.ThrowsAsync<ArgumentException>(() 
                 => userService.LoginUser("", pass));
         }
         [Fact]
@@ -226,10 +233,10 @@ namespace NewsAggregator.Buisness.Tests
 
             var userService = CreateUserService();
             //act
-            var result = userService.IsLoginAvailiable(It.IsAny<string>());
+            var result = userService.IsUserExistByLogin(It.IsAny<string>());
 
             //assert
-            Assert.True(result);
+            Assert.False(result);
         }
         [Fact]
         public void IsLoginAvailiable_ExistingLogin_False()
@@ -244,10 +251,10 @@ namespace NewsAggregator.Buisness.Tests
 
             var userService = CreateUserService();
             //act
-            var result = userService.IsLoginAvailiable(It.IsAny<string>());
+            var result = userService.IsUserExistByLogin(It.IsAny<string>());
 
             //assert
-            Assert.False(result);
+            Assert.True(result);
         }
         [Fact]
         public void IsEmailAvailiable_NotExistingEmail_True()
@@ -259,10 +266,10 @@ namespace NewsAggregator.Buisness.Tests
 
             var userService = CreateUserService();
             //act
-            var result = userService.IsEmailAvailiable(It.IsAny<string>());
+            var result = userService.IsUserExistByEmail(It.IsAny<string>());
 
             //assert
-            Assert.True(result);
+            Assert.False(result);
         }
         [Fact]
         public void IsEmailAvailiable_ExistingEmail_False()
@@ -277,10 +284,10 @@ namespace NewsAggregator.Buisness.Tests
 
             var userService = CreateUserService();
             //act
-            var result = userService.IsEmailAvailiable(It.IsAny<string>());
+            var result = userService.IsUserExistByEmail(It.IsAny<string>());
 
             //assert
-            Assert.False(result);
+            Assert.True(result);
         }
         [Fact]
         public async Task RegisterUserAsync_CorrectData_CorrectResponse()
@@ -334,12 +341,12 @@ namespace NewsAggregator.Buisness.Tests
             };
             
             userServiceMock.Setup(us
-                => us.IsEmailAvailiable(It.IsAny<string>()))
-                .Returns(true);
+                => us.IsUserExistByEmail(It.IsAny<string>()))
+                .Returns(false);
             
             userServiceMock.Setup(us
-                => us.IsLoginAvailiable(It.IsAny<string>()))
-                .Returns(true);
+                => us.IsUserExistByLogin(It.IsAny<string>()))
+                .Returns(false);
 
             var userService = userServiceMock.Object;
 
@@ -366,8 +373,8 @@ namespace NewsAggregator.Buisness.Tests
                     _mapper.Object,
                     _config.Object));
             mock.Setup(moq
-                => moq.IsLoginAvailiable(It.IsAny<string>()))
-                .Returns(false);
+                => moq.IsUserExistByLogin(It.IsAny<string>()))
+                .Returns(true);
 
             //act & assert
             await Assert.ThrowsAsync<InvalidDataException>(async ()
@@ -383,11 +390,11 @@ namespace NewsAggregator.Buisness.Tests
                     _mapper.Object,
                     _config.Object));
             mock.Setup(moq
-                => moq.IsLoginAvailiable(It.IsAny<string>()))
-                .Returns(true);
-            mock.Setup(moq
-                => moq.IsEmailAvailiable(It.IsAny<string>()))
+                => moq.IsUserExistByLogin(It.IsAny<string>()))
                 .Returns(false);
+            mock.Setup(moq
+                => moq.IsUserExistByEmail(It.IsAny<string>()))
+                .Returns(true);
 
             //act & assert
             await Assert.ThrowsAsync<InvalidDataException>(async ()

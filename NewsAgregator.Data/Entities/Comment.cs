@@ -7,8 +7,10 @@ namespace NewsAgregator.Data.Entities
         [Key]
         [Required]
         public Guid Id { get; set; }
-        public string? Text { get; set; }
-        public DateTime? Created { get; set; }
+        [Required]
+        public string Text { get; set; }
+        [Required]
+        public DateTime Created { get; set; }
         public Guid? ParentCommentId { get; set; }
         public Comment? ParentComment { get; set; }
         [Required]

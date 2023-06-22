@@ -8,8 +8,9 @@ namespace NewsAgregator.Data.Entities
         public Guid Id { get; set; }
         [Required]
         public string Name { get; set; }
-        public string? Description { get; set; }
-        public string? Url { get; set; }
-        public string? RssUrl { get; set; }
+        [Required]
+        public string Url { get; set; }
+        [Required]
+        public string RssUrl { get; set; }
     }
 }

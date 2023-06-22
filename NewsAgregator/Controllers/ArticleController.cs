@@ -71,10 +71,8 @@ namespace NewsAgregator.Mvc.Controllers
         {
             try
             {
-                var article = await _articleService.GetDetailAsync(id);
-                var comments = _commentService.GetCommentsByArticleId(article.Id);
+                var article = await _articleService.GetArticleAsync(id);
                 var viewModel = _mapper.Map<ArticleDetailModel>(article);
-                viewModel.Comments = comments.ToList();
 
                 return View(viewModel);
             }
@@ -106,7 +104,7 @@ namespace NewsAgregator.Mvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(ArticleCreateModel article)
         {
-            var articleCreate = _mapper.Map<ArticleCreateDto>(article);
+            var articleCreate = _mapper.Map<ArticleDto>(article);
             if (ModelState.IsValid)
             {
                 articleCreate.Id = Guid.NewGuid();

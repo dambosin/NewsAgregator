@@ -23,7 +23,7 @@ namespace NewsAgregator.Mvc.Controllers
             _logger = logger;
         }
         [HttpGet]
-        public async Task<IActionResult> User(Guid id)
+        public new async Task<IActionResult> User(Guid id)
         {
             try
             {

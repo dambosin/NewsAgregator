@@ -4,6 +4,6 @@ namespace NewsAgregator.Abstractions
 {
     public interface ISiteParser
     {
-        List<ArticleCreateDto> Parse(SourceDto source);
+        List<ArticleDto> Parse(SourceDto source);
     }
 }

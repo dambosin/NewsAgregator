@@ -2,7 +2,7 @@
 
 <div class="col-4">
     <div class="card mb-3">
-        <img src="@Model.UrlThumbnail" class="card-img-top">
+        <img src="@Model.UrlHeader" class="card-img-top">
         <div class="card-body">
             <h5 class="card-title"><a class="text-decoration-none" asp-action="Detail" asp-controller="Article" asp-route-id="@Model.Id">@Model.Title</a></h5>
             <p class="card-text">@Html.Raw(Model.ShortDescription)</p>

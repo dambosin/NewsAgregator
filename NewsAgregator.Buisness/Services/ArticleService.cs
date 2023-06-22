@@ -10,6 +10,7 @@ using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using Newtonsoft.Json;
 using Serilog;
+using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
@@ -18,6 +19,7 @@ using System.Text;
 namespace NewsAgregator.Buisness.Services
 {
     //todo: rpeort comment- article
+    //todo: throw argumeentNullException when argumeent in constructor is null
     //todo: admin report handler page
     public class ArticleSrvice : IArticleService
     {
@@ -43,7 +45,7 @@ namespace NewsAgregator.Buisness.Services
 
         public async Task<int> CountAsync() => await _unitOfWork.Articles.CountAsync();
 
-        public IEnumerable<ArticleDto> GetByPage(int pageNumber, int pageSize)
+        public List<ArticleDto> GetByPage(int pageNumber, int pageSize)
         {
             var articles = _unitOfWork.Articles.GetAsQueryable();
             if (pageSize < 1) throw new ArgumentOutOfRangeException($"Page size must be 1 or higher. pageSize = {pageSize}");
@@ -64,7 +66,7 @@ namespace NewsAgregator.Buisness.Services
                 .ToList();
         }
 
-        public async Task<ArticleDto> GetDetailAsync(Guid id)
+        public async Task<ArticleDto> GetArticleAsync(Guid id)
         {
             var article = await _unitOfWork.Articles.GetByIdAsync(id);
             if (article == null)
@@ -72,7 +74,7 @@ namespace NewsAgregator.Buisness.Services
             return _mapper.Map<ArticleDto>(article);
         }
 
-        public async Task<Guid> CreateAsync(ArticleCreateDto article)
+        public async Task<Guid> CreateAsync(ArticleDto article)
         {
             await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(article));
             await _unitOfWork.CommitAsync();
@@ -81,7 +83,7 @@ namespace NewsAgregator.Buisness.Services
         public async Task<int> LoadFromSourcesAsync()
         {
             var sources = await _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToListAsync();
-            var articles = new List<ArticleCreateDto>();
+            var articles = new List<ArticleDto>();
             foreach (var source in sources)
             {
                 articles.AddRange(_parserFactory.GetInstance(source.Name).Parse(source));
@@ -156,6 +158,21 @@ namespace NewsAgregator.Buisness.Services
         }
 
         public Task Rate(List<ArticleDto> articles)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RemoveAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task UpdateAsync(ArticleDto article)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression)
         {
             throw new NotImplementedException();
         }

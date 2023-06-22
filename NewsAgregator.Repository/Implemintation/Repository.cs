@@ -37,7 +37,7 @@ namespace NewsAgregator.Repository.Implemintation
         public async Task AddRangeAsync(IEnumerable<T> entities) => await _dbset.AddRangeAsync(entities);
 
         public void Update(T entity) => _dbset.Update(entity);
-        public async void PatchAsync(Guid id, List<PatchDto> patches)
+        public async void Patch(Guid id, List<PatchDto> patches)
         {
             var entity = await _dbset
                 .SingleOrDefaultAsync(entity => entity.Id == id);
@@ -51,7 +51,7 @@ namespace NewsAgregator.Repository.Implemintation
         public void RemoveRange(IEnumerable<T> entities) => _dbset.RemoveRange(entities);
         public async Task RemoveAsync(Guid id) => _dbset
             .Remove(await _dbset
-                .FirstOrDefaultAsync(entity => entity.Id == id));
+                .FirstAsync(entity => entity.Id == id));
 
         public void Dispose()
         {

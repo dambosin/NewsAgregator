@@ -205,7 +205,7 @@ namespace NewsAggregator.Buisness.Tests
 
             var articleService = CreateArticleService();
             //act
-            var result = await articleService.GetDetailAsync(Guid.Empty);
+            var result = await articleService.GetArticleAsync(Guid.Empty);
             //assert
             Assert.NotNull(result);
         }
@@ -219,7 +219,7 @@ namespace NewsAggregator.Buisness.Tests
 
             var articleService = CreateArticleService();
             //act & assert
-            await Assert.ThrowsAsync<ArgumentException>(async () => await articleService.GetDetailAsync(Guid.Empty));
+            await Assert.ThrowsAsync<ArgumentException>(async () => await articleService.GetArticleAsync(Guid.Empty));
         }
 
         [Fact]
@@ -237,12 +237,12 @@ namespace NewsAggregator.Buisness.Tests
                 .ReturnsAsync(1);
 
             _mapper.Setup(mapper
-                => mapper.Map<Article>(It.IsAny<ArticleCreateDto>()))
+                => mapper.Map<Article>(It.IsAny<ArticleDto>()))
                 .Returns(new Article());
 
             var articleService = CreateArticleService();
             //act
-            await articleService.CreateAsync(new ArticleCreateDto());
+            await articleService.CreateAsync(new ArticleDto());
             //assert
             Assert.Single(articles);
         }

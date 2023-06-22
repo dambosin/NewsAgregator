@@ -5,18 +5,14 @@ using NewsAgregator.Abstractions;
 using NewsAgregator.Core.Dto;
 using System.ServiceModel.Syndication;
 using System.Xml;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using System.Xml.XPath;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace NewsAgregator.Buisness.Parsers
 {
     public class OnlinerParser : ISiteParser
     {
-        public List<ArticleCreateDto> Parse(SourceDto source)
+        public List<ArticleDto> Parse(SourceDto source)
         {
-            List<ArticleCreateDto> articles = new();
+            List<ArticleDto> articles = new();
             using (var reader = XmlReader.Create(source.RssUrl))
             {
                 var feed = SyndicationFeed.Load(reader);
@@ -52,18 +48,16 @@ namespace NewsAgregator.Buisness.Parsers
                     var doc2 = new HtmlDocument();
                     doc2.LoadHtml(item.Summary.Text);
                     var description = doc2.DocumentNode;
-                    string thumbnail = description.SelectSingleNode("p/a/img").Attributes["src"].Value;
                     RemoveNodes(description, ".//img", node => true);
                     RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
                     RemoveNodes(description, "./p | ./a", node => node.InnerText.Equals(""));
                     description.LastChild.Remove();
 
-                    var article = new ArticleCreateDto
+                    var article = new ArticleDto
                     {
                         UrlHeader = header,
-                        UrlThumbnail = thumbnail,
                         Title = item.Title.Text,
-                        ShortDescription = description.InnerHtml,
+                        ShortDescription = description.FirstChild.InnerHtml,
                         Content = content.InnerHtml,
                         PositiveIndex = 0,
                         Created = DateTime.Now,

@@ -8,18 +8,23 @@ namespace NewsAgregator.Data.Entities
         [Required]
         public Guid Id { get; set; }
         [Required]
-        public string UrlHeader { get; set; }
         public string IdOnSite { get; set; }
-        public string UrlThumbnail { get; set; }
-        public string? Title { get; set; }
-        public string? ShortDescription { get; set; }
-        public string? Content { get; set; }
-        public double? PositiveIndex { get; set; }
-        public List<Comment>? Comments { get; set; }
+        [Required]
+        public string Title { get; set; }
+        [Required]
+        public string UrlHeader { get; set; }
+        [Required]
+        public string ShortDescription { get; set; }
         [Required]
         public Guid SourceId { get; set; }
         public Source Source { get; set; }
-        public DateTime? Created { get; set; }
-        public int? LikesCount { get; set; }
+        [Required]
+        public string Content { get; set; }
+        public double PositiveIndex { get; set; }
+        public List<Comment>? Comments { get; set; }
+        [Required]
+        public DateTime Created { get; set; }
+        [Required]
+        public int LikesCount { get; set; }
     }
 }

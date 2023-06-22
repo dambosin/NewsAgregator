@@ -19,7 +19,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.WebApi", "New
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{CF480567-BF55-48CC-B6DC-01FD4E5BF707}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAggregator.Buisness.Tests", "NewsAggregator.Buisness.Tests\NewsAggregator.Buisness.Tests.csproj", "{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAggregator.Buisness.Tests", "NewsAggregator.Buisness.Tests\NewsAggregator.Buisness.Tests.csproj", "{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Data.Cqs", "NewsAgregator.Data.Cqs\NewsAgregator.Data.Cqs.csproj", "{D3288961-735C-43F1-A8CB-B0803F7834D6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Data.Cqs.Tests", "NewsAgregator.Data.Cqs.Test\NewsAgregator.Data.Cqs.Tests.csproj", "{77DE416A-EBEB-4448-864D-FD7E02A6FC19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,12 +63,21 @@ Global
 		{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D3288961-735C-43F1-A8CB-B0803F7834D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D3288961-735C-43F1-A8CB-B0803F7834D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D3288961-735C-43F1-A8CB-B0803F7834D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D3288961-735C-43F1-A8CB-B0803F7834D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77DE416A-EBEB-4448-864D-FD7E02A6FC19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77DE416A-EBEB-4448-864D-FD7E02A6FC19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77DE416A-EBEB-4448-864D-FD7E02A6FC19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77DE416A-EBEB-4448-864D-FD7E02A6FC19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{230AFCCD-7D64-4DDB-96A6-1F39A37FAC6F} = {CF480567-BF55-48CC-B6DC-01FD4E5BF707}
+		{77DE416A-EBEB-4448-864D-FD7E02A6FC19} = {CF480567-BF55-48CC-B6DC-01FD4E5BF707}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4F23CBA7-3F50-4865-ACB2-015EA8DAF19A}
