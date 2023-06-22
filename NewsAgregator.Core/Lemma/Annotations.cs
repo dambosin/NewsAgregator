@@ -1,4 +1,4 @@
-﻿namespace NewsAgregator.Buisness.Models
+﻿namespace NewsAgregator.Core.Lemma
 {
     public class Annotations
     {

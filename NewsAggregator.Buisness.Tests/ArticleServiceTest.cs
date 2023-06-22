@@ -19,6 +19,8 @@ namespace NewsAggregator.Buisness.Tests
         private readonly Mock<ILogger> _logger = new();
         private readonly Mock<ISiteParserFactory> _siteParserFactory = new();
         private readonly Mock<IConfiguration> _config = new();
+        private readonly Mock<ISourceService> _sourceService = new();
+        private readonly Mock<IRateService> _rateService = new();
         private IArticleService CreateArticleService()
         {   
             return new ArticleSrvice(
@@ -26,7 +28,9 @@ namespace NewsAggregator.Buisness.Tests
                 _mapper.Object,
                 _logger.Object,
                 _siteParserFactory.Object,
-                _config.Object);
+                _config.Object,
+                _sourceService.Object,
+                _rateService.Object);
         }
 
         [Fact]

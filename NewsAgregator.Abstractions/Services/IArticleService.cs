@@ -47,24 +47,19 @@ namespace NewsAgregator.Abstractions.Services
         /// </summary>
         /// <returns>Number of loaded articles</returns>
         Task<int> LoadFromSourcesAsync();
-        /// <summary>
-        /// Rates string text
-        /// </summary>
-        /// <param name="text">Text to rate</param>
-        /// <returns>Rate as double value from -5 to 5</returns>
-        Task<double> RateTextAsync(string text);
+        Task RateArticlesAsync();
         /// <summary>
         /// Rates article and save rate to database
         /// </summary>
         /// <param name="article">Article to rate</param>
         /// <returns>Completed Task</returns>
-        Task Rate(ArticleDto article);
+        Task<double> Rate(Article article);
         /// <summary>
         /// Rates list collection of articles and save rates to database
         /// </summary>
         /// <param name="articles">Articles to rate</param>
         /// <returns>Completed Task</returns>
-        Task Rate(List<ArticleDto> articles);
+        Task<List<Article>> Rate(List<Article> articles);
         /// <summary>
         /// Get filtered articles by pages
         /// </summary>
@@ -73,6 +68,5 @@ namespace NewsAgregator.Abstractions.Services
         /// <param name="expression">Filter expression</param>
         /// <returns>List collection of ArticleDto</returns>
         List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression);
-        Task ReRateArticles();
     }
 }

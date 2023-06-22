@@ -7,6 +7,7 @@
         public string UrlHeader { get; set; }
         public string Title { get; set; }
         public string ShortDescription { get; set; }
+        public string PlainText { get; set; }
         public DateTime Created { get; set; }
         public int LikesCount { get; set; }
         public string Content { get; set; }
