@@ -21,6 +21,7 @@ namespace NewsAgregator.Buisness.Services
     //todo: rpeort comment- article
     //todo: throw argumeentNullException when argumeent in constructor is null
     //todo: admin report handler page
+    //todo: article filter
     public class ArticleSrvice : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -80,6 +81,14 @@ namespace NewsAgregator.Buisness.Services
             await _unitOfWork.CommitAsync();
             return article.Id;
         }
+        public Task RemoveAsync(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+        public Task UpdateAsync(ArticleDto article)
+        {
+            throw new NotImplementedException();
+        }
         public async Task<int> LoadFromSourcesAsync()
         {
             var sources = await _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToListAsync();
@@ -96,19 +105,6 @@ namespace NewsAgregator.Buisness.Services
             await _unitOfWork.Articles.AddRangeAsync(articles.Select(article => _mapper.Map<Article>(article)));
             await _unitOfWork.CommitAsync();
             return articles.Count;
-        }
-
-        private static string ConvertHtmlToText(string html)
-        {
-            var htmlDoc = new HtmlDocument();
-            htmlDoc.LoadHtml(html);
-
-            var text = "";
-            foreach (var node in htmlDoc.DocumentNode.SelectNodes("./p"))
-            {
-                text += node.InnerText;
-            }
-            return text;
         }
         public async Task<double> RateTextAsync(string text)
         {
@@ -144,37 +140,73 @@ namespace NewsAgregator.Buisness.Services
                 lemmas = JsonConvert.DeserializeObject<List<LemmaResponse>>(responseString);
             }
             double rate = 0;
+            var lemmasCount = 0;
             foreach (var lemma in lemmas[0].Annotations.Lemma)
             {
-                if (!lemmaRates.ContainsKey(lemma.Value)) continue;
-                rate += lemmaRates[lemma.Value];
+                if (!lemmaRates.ContainsKey(lemma.Value!)) continue;
+                rate += lemmaRates[lemma.Value!];
+                lemmasCount++;
             }
-            return rate / lemmas[0].Annotations.Lemma.Count;
+            return ConvertToLocalRate(rate / lemmasCount);
         }
-
         public Task Rate(ArticleDto article)
         {
             throw new NotImplementedException();
         }
-
-        public Task Rate(List<ArticleDto> articles)
+        public async Task Rate(List<ArticleDto> articles)
         {
-            throw new NotImplementedException();
+            foreach (var article in articles)
+            {
+                await Rate(article);
+            }
         }
-
-        public Task RemoveAsync(Guid id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(ArticleDto article)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression)
         {
             throw new NotImplementedException();
+        }
+        public async Task ReRateArticles()
+        {
+            var articles = _unitOfWork.Articles.GetAsQueryable().ToList();
+            foreach (var article in articles)
+            {
+                article.PositiveIndex = ConvertToLocalRate(article.PositiveIndex);
+                _unitOfWork.Articles.Update(article);
+            }
+            await _unitOfWork.CommitAsync();
+        }
+
+
+
+        private static string ConvertHtmlToText(string html)
+        {
+            var htmlDoc = new HtmlDocument();
+            htmlDoc.LoadHtml(html);
+
+            var text = "";
+            foreach (var node in htmlDoc.DocumentNode.SelectNodes("./p"))
+            {
+                text += node.InnerText;
+            }
+            return text;
+        }
+        private double ConvertToLocalRate(double rate)
+        {
+            int.TryParse(_configuration["Rating:MaxRate"], out var MaxRate);
+            int.TryParse(_configuration["Rating:MinRate"], out var MinRate);
+            int.TryParse(_configuration["Rating:MaxInputRate"], out var MaxInputRate);
+            int.TryParse(_configuration["Rating:MinInputRate"], out var MinInputRate);
+            int.TryParse(_configuration["Rating:RateRank"], out var RateRank);
+
+            if (rate >= MaxInputRate) return MaxRate;
+            if (rate <= MinInputRate) return MinRate;
+
+            var result = (rate - MinInputRate);//to start from zero
+            result /= (MaxInputRate - MinInputRate);//percantage of value
+            result *= (MaxRate - MinRate);//convert to new rate system
+            result *= Math.Pow(10, RateRank);//save RateRank numbers after dot as integer
+            result = Math.Ceiling(result) / Math.Pow(10, RateRank);//rounding value and restoring it's view
+
+            return result;
         }
     }
 }

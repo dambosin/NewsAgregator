@@ -107,10 +107,6 @@ namespace NewsAgregator.Mvc.Controllers
             var articleCreate = _mapper.Map<ArticleDto>(article);
             if (ModelState.IsValid)
             {
-                articleCreate.Id = Guid.NewGuid();
-                articleCreate.PositiveIndex = 0;
-                articleCreate.Created = DateTime.Now;
-                articleCreate.LikesCount = 0;
                 await _articleService.CreateAsync(articleCreate);
             }
 
@@ -120,6 +116,18 @@ namespace NewsAgregator.Mvc.Controllers
         public async Task<IActionResult> LoadArticles()
         {
             await _articleService.LoadFromSourcesAsync();
+            return RedirectToAction("Index");
+        }
+        [HttpGet]
+        public IActionResult ReRateArticles()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ReRateArticles(bool confirm = true)
+        {
+            if (!confirm) throw new NotImplementedException();
+            await _articleService.ReRateArticles();
             return RedirectToAction("Index");
         }
     }

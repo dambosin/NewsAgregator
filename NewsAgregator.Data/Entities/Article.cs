@@ -20,6 +20,9 @@ namespace NewsAgregator.Data.Entities
         public Source Source { get; set; }
         [Required]
         public string Content { get; set; }
+        [Required]
+        public string PlainText { get; set; }
+        [Required]
         public double PositiveIndex { get; set; }
         public List<Comment>? Comments { get; set; }
         [Required]

@@ -17,6 +17,22 @@ namespace NewsAgregator.Data
             : base(options)
         {
         }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Article>()
+                .Property(article => article.PositiveIndex)
+                .HasDefaultValue(-10);
+            modelBuilder.Entity<Article>()
+                .Property(article => article.Created)
+                .HasDefaultValueSql("getdate()");
+            modelBuilder.Entity<Article>()
+                .Property(article => article.LikesCount)
+                .HasDefaultValue(0);
+
+            modelBuilder.Entity<Comment>()
+                .Property(comment => comment.Created)
+                .HasDefaultValueSql("getdate()");
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

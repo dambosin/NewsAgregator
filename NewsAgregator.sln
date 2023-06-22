@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAggregator.Buisness.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Data.Cqs", "NewsAgregator.Data.Cqs\NewsAgregator.Data.Cqs.csproj", "{D3288961-735C-43F1-A8CB-B0803F7834D6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewsAgregator.Data.Cqs.Tests", "NewsAgregator.Data.Cqs.Test\NewsAgregator.Data.Cqs.Tests.csproj", "{77DE416A-EBEB-4448-864D-FD7E02A6FC19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NewsAgregator.Data.Cqs.Tests", "NewsAgregator.Data.Cqs.Test\NewsAgregator.Data.Cqs.Tests.csproj", "{77DE416A-EBEB-4448-864D-FD7E02A6FC19}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

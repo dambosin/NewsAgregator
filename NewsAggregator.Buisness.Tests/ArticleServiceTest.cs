@@ -193,7 +193,7 @@ namespace NewsAggregator.Buisness.Tests
         }
 
         [Fact]
-        public async Task GetDetailAsync_CorrectData_CorrectResponse()
+        public async Task GetArticleAsync_CorrectData_CorrectResponse()
         {
             //arrange
             _unitOfWork.Setup(uow
@@ -210,12 +210,12 @@ namespace NewsAggregator.Buisness.Tests
             Assert.NotNull(result);
         }
         [Fact]
-        public async Task GetDetailAsync_WrongData_ThrowArgumentException()
+        public async Task GetArticleAsync_WrongData_ThrowArgumentException()
         {
             //arrange
             _unitOfWork.Setup(uow
                 => uow.Articles.GetByIdAsync(It.IsAny<Guid>()))
-                .ReturnsAsync((Article)null);
+                .ReturnsAsync((Article)null!);
 
             var articleService = CreateArticleService();
             //act & assert
@@ -246,5 +246,20 @@ namespace NewsAggregator.Buisness.Tests
             //assert
             Assert.Single(articles);
         }
+
+        /*[Fact]
+        public async Task RemoveAsync_CorrectData_CorrectResponse()
+        {
+            //arrange
+            var articles = new List<ArticleDto>()
+            {
+                new()
+            };
+            var _articleService = CreateArticleService();
+            //act
+            _articleService.RemoveAsync(Guid.Empty);
+            //assert
+            Assert.Empty(articles);
+        }*/
     }
 }
