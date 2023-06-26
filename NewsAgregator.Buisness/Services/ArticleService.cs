@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using HtmlAgilityPack;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Configuration;
 using NewsAgregator.Abstractions;
 using NewsAgregator.Abstractions.Repository;
@@ -7,7 +8,9 @@ using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using Serilog;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Security;
 using System.Text.RegularExpressions;
 
 namespace NewsAgregator.Buisness.Services
@@ -101,20 +104,6 @@ namespace NewsAgregator.Buisness.Services
                     .Select(article => _mapper.Map<Article>(article)));
             }
             return await _unitOfWork.CommitAsync();
-            /*var sources = await _unitOfWork.Sources.GetAsQueryable().Select(source => _mapper.Map<SourceDto>(source)).ToListAsync();
-            var articles = new List<ArticleDto>();
-            foreach (var source in sources)
-            {
-                articles.AddRange(_parserFactory.GetInstance(source.Name).Parse(source));
-            }
-            articles = articles.Where(article => !_unitOfWork.Articles.FindBy(art => art.IdOnSite.Equals(article.IdOnSite)).Any()).ToList();
-            foreach (var article in articles)
-            {
-                article.PositiveIndex = await RateTextAsync(ConvertHtmlToText(article.Content!));
-            }
-            await _unitOfWork.Articles.AddRangeAsync(articles.Select(article => _mapper.Map<Article>(article)));
-            await _unitOfWork.CommitAsync();
-            return articles.Count;*/
         }
         public async Task RateArticlesAsync()
         {
@@ -150,6 +139,6 @@ namespace NewsAgregator.Buisness.Services
         private List<string> GetArticlesOriginalIds()
         {
             return _unitOfWork.Articles.GetAsQueryable().Select(article => article.IdOnSite).ToList();
-        }   
+        }
     }
 }

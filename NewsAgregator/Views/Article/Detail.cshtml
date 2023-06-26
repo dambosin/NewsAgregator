@@ -1,15 +1,26 @@
 ﻿@model NewsAgregator.Mvc.Models.Articles.ArticleDetailModel
 
-<div class="container">
-    <div class="card bg-body-secondary col-12">
-        <img src="@Model.UrlHeader" class="card-img-top">
-        <div class="card-body">
-            <h5 class="card-title">@Model.Title</h5>
-            <div class="row justify-content-center">
+<div class="row row-cols-1 justify-content-center">
+    <div class="col-lg-8 col-sm-10 bg-body-tertiary px-0 py-4 justify-content-center">
+        <div class="article">
+            <h2 class="text-center">
+                @Model.Title
+            </h2>
+            <div class="row g-0">
                 @Html.Raw(Model.Content)
             </div>
-            <p>@Model.PositiveIndex</p>
-            <p>@Model.LikesCount</p>
+            <div class="row justify-content-between mx-5">
+            <div class="col-4">
+                Rate is @Model.PositiveIndex
+            </div>
+            <div class="col-4 text-end">
+                @Model.LikesCount Likes
+            </div>
+            </div>
         </div>
     </div>
 </div>
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/article..css" asp-append-version="true" />
+}

@@ -48,6 +48,8 @@ namespace NewsAgregator.Buisness.Services
             };
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            text = text.Replace("\"", "\\\"").Replace(Environment.NewLine, "");
+            _logger.Information(text);
             var request = new HttpRequestMessage(HttpMethod.Post,
                 $"http://api.ispras.ru/texterra/v1/nlp?targetType=lemma&apikey={_configuration["Secrets:TextErra:ApiKey"]}")
             {

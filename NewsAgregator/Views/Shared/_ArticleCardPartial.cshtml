@@ -1,7 +1,7 @@
 ﻿@model NewsAgregator.Mvc.Models.Articles.ArticleModel;
 
-<div class="col-4">
-    <div class="card mb-3">
+<div class="col-sm-12 col-md-6 col-lg-4">
+    <div class="card bg-body-tertiary mb-3">
         <img src="@Model.UrlHeader" class="card-img-top">
         <div class="card-body">
             <h5 class="card-title"><a class="text-decoration-none" asp-action="Detail" asp-controller="Article" asp-route-id="@Model.Id">@Model.Title</a></h5>

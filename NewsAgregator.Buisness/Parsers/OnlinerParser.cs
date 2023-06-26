@@ -1,6 +1,4 @@
-﻿using Coypu.Drivers.Selenium;
-using Coypu;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using NewsAgregator.Abstractions;
 using NewsAgregator.Core.Dto;
 using System.ServiceModel.Syndication;
@@ -19,25 +17,12 @@ namespace NewsAgregator.Buisness.Parsers
                 var feed = SyndicationFeed.Load(reader);
                 foreach (var item in feed.Items)
                 {
-                    using var browser = new BrowserSession(new SessionConfiguration
-                    {
-                        AppHost = "Onliner.by",
-                        Browser = Coypu.Drivers.Browser.Edge,
-                        SSL = true,
-                        Driver = typeof(SeleniumWebDriver),
-                        Timeout = TimeSpan.FromSeconds(3),
-                        RetryInterval = TimeSpan.FromSeconds(0.1)
-                    });
-                    //Manage news page
-                    browser.Visit(item.Id.ToString());
-                    var element = browser.FindXPath("//body");
-                    var news = element.OuterHTML;
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(news);
+                    
+                    var doc = new HtmlWeb().Load(item.Id);
                     var content = SelectNode(doc, "//div[contains(concat(\" \", normalize-space(@class), \" \"), \" news-text \")]");
                     var endNode = SelectNode(content, "./div[@id=\"news-text-end\"] | ./hr");
                     endNode ??= SelectNode(content, "./*[@style = \"text-align: right;\"]")?.PreviousSibling;
-                    if (endNode == null) continue;
+                    if (endNode == null) continue;  
                     RemoveEndNodes(endNode);
                     RemoveNodes(content, "./text() | ./script | ./div[not(contains(concat(\" \", normalize-space(@class), \" \"), \" news-media \"))] | ./p[@style]");
                     RemoveNodes(content, "./p/a | ./a", node => node.InnerText.Equals("") || node.InnerText.Equals("\r\n\r\n") || node.HasClass("news-banner"));
@@ -45,11 +30,11 @@ namespace NewsAgregator.Buisness.Parsers
                     ExtractMedia(content);
                     AddClassesToHtml(content);
                     var header = ExtractHeaderImage(doc);
-                    var TextNodes = content.SelectNodes("//p/text()");
+                    var TextNodes = content.SelectNodes("//p");
                     var plainText = "";
                     foreach ( var node in TextNodes)
                     {
-                        plainText += node.OuterHtml + ". ";
+                        plainText += node.InnerText + ". ";
                     }
                     plainText = Regex.Replace(plainText, @"[\r\n\t]", "");
 

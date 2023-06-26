@@ -6,10 +6,11 @@
     <title>@ViewData["Title"] - NewsAgregator</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required:false)
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-lg bg-body-tertiary shadow-sm alight-middle mb-3">
+        <nav class="navbar navbar-expand-lg bg-body-secondary shadow-sm alight-middle">
             <div class="container-fluid">
             <a class="navbar-brand" asp-action="index" asp-controller="home">NewsAggregator</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">

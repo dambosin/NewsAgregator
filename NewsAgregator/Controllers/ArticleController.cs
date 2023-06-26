@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Mvc.Models.Articles;
@@ -122,6 +123,12 @@ namespace NewsAgregator.Mvc.Controllers
         public async Task<IActionResult> RateArticles()
         {
             await _articleService.RateArticlesAsync();
+            return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> RefactorArticle()
+        {
+            await _articleService.Refactor();
             return RedirectToAction("Index");
         }
     }
