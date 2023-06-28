@@ -1,0 +1,45 @@
+﻿@model NewsAgregator.Mvc.Models.Articles.ArticleViewByPageModel;
+<div class="py-5">
+    <div class="container">
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="row mb-3 text-center">
+                <form class="col-auto" asp-controller="Article" asp-action="LoadArticles" method="post">
+                    <button type="submit" class="btn btn-primary col-auto">Load</button>
+                </form> 
+                <form class="col-auto" asp-controller="Article" asp-action="RateArticles" method="post">
+                    <button type="submit" class="btn btn-primary col-auto">Rate</button>
+                </form>
+            </div>
+        }
+        <div class="row">
+            @{
+                foreach (var article in Model.Articles)
+                {
+                    <partial name="_ArticleCardPartial" for="@article"/>
+                }
+        }
+        </div>
+        <nav aria-label="...">
+            <ul class="pagination pagination-sm">
+                @for(int i =1; i <= Model.PageInfo.PageAmount; i++)
+                {
+                    @if (i == Model.PageInfo.PageNumber)
+                    {
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">@i</span>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="page-item"><a class="page-link" asp-action="Index" asp-controller="Article" asp-route-page="@i">@i</a></li>
+                    }
+
+                }
+            </ul>
+        </nav>
+    </div>
+</div>
+@section Styles{
+    <link rel="stylesheet" href="~/css/articleCard.css" asp-append-version="true" />
+}

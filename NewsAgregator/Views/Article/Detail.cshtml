@@ -1,0 +1,45 @@
+﻿@model NewsAgregator.Mvc.Models.Articles.ArticleDetailModel
+
+<div class="row row-cols-1 justify-content-center">
+    <div class="col-lg-8 col-sm-10 bg-body-tertiary px-0 py-4 justify-content-center">
+        <div class="article">
+            <h2 class="text-center">
+                @Model.Title
+            </h2>
+            <div class="row g-0">
+                @Html.Raw(Model.Content)
+            </div>
+            <div class="row align-items-center mx-5">
+                <div class="col-auto me-auto">
+                    Rate is @Model.PositiveIndex
+                </div>
+                <div class="col-auto">
+                    <a class="align-content-center" asp-action="Like" asp-controller="Article">
+                        <img src="~/like.png" />
+                    </a>
+                </div>
+                <div class="col-auto">
+                    <p class="text-end m-0 p-0">
+                        @Model.LikesCount Likes
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/article.css" asp-append-version="true" />
+}
+@section Scripts{
+    <script>
+        document.addEventListener("DOMContentLoaded", pageonLoad());
+        function pageonLoad(){
+        var links = document.querySelector(".article").querySelectorAll("a");
+        links.forEach(link => link.classList.add("link-info"));
+        links.forEach(link => link.classList.add("link-underline-opacity-25"));
+        links.forEach(link => link.classList.add("link-underline-opacity-100-hover"));
+        }
+
+    </script>
+}

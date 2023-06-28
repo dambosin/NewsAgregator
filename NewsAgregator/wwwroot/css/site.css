@@ -1,18 +1,49 @@
-html {
-  font-size: 14px;
+#darkmode-label {
+    width: 3em;
+    height: 1.2em;
+    position: relative;
+    display: block;
+    background: #ebebeb;
+    border-radius: 16px;
+    box-shadow: inset 0px 0.02em 0.09em rgba(0,0,0,0.4), inset 0px -0.02em 0.09em rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: 0.3s;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    #darkmode-label:after {
+        content: "";
+        width: 1.08em;
+        height: 1.08em;
+        position: absolute;
+        top: 0.06em;
+        left: 0.06em;
+        background: linear-gradient(180deg,#ffcc89,#d8860b);
+        border-radius: 1.08em;
+        box-shadow: 0px 0.03em 0.06em rgba(0,0,0,0.2);
+        transition: 0.3s;
+    }
+
+#darkmode-toggle{
+    width: 0;
+    height: 0;
+    visibility: hidden;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+    #darkmode-toggle:checked + #darkmode-label{
+        background: #242424;
+    }
+
+    #darkmode-toggle:checked + #darkmode-label:after {
+        left: 2.89em;
+        transform: translateX(-100%);
+        background: linear-gradient(180deg,#777,#3a3a3a);
+    }
+
+#darkmode-label:active:after {
+    width: 1.53em;
 }
 
-body {
-  margin-bottom: 60px;
+.card{
+    /*height: 100% min(200px);*/
 }
+

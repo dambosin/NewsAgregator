@@ -1,0 +1,29 @@
+﻿@model NewsAgregator.Mvc.Models.Users.UsersViewModel
+<div class="row">
+    <a asp-controller="Admin" asp-action="CreateUser" class="btn btn-primary align-content-lg-center col-3">Create</a>
+</div>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Login</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var i = 1;
+            foreach(var user in Model.Users)
+            {
+                <tr>
+                    <th scope="row">@(i++)</th>
+                    <td><a class="btn btn-outline-primary" asp-controller="User" asp-action="user" asp-route-id="@user.Id">@user.Name</a></td>
+                    <td>@user.Login</td>
+                    <td><form asp-action="RemoveUser" asp-controller="admin" asp-route-id="@user.Login" method="post"><button class="btn btn-primary" type="submit">Remove</button></form></td>
+                </tr>
+
+            }
+        }
+    </tbody>
+</table>

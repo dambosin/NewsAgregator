@@ -1,8 +1,17 @@
-﻿@{
+﻿@model System.Collections.Generic.List<NewsAgregator.Mvc.Models.Articles.ArticleModel>;
+@{
     ViewData["Title"] = "Home Page";
+    ViewData["aria-current"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row mt-3">
+    @{
+        foreach (var article in Model)
+        {
+            <partial name="_ArticleCardPartial" for="@article" />
+        }
+    }
 </div>
+@section Styles{
+    <link rel="stylesheet" href="~/css/articleCard.css" asp-append-version="true" />
+}

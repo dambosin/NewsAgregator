@@ -1,4 +1,32 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿let currentAriaLink = document.getElementById(ariaCurrent.toLowerCase());
+if (currentAriaLink != null) {
+    currentAriaLink.classList.add('active');
+    currentAriaLink.setAttribute('aria-current', 'page');
+}
+if (localStorage.getItem("theme") == null) {
+    localStorage.setItem("theme", "light");
+}
 
-// Write your JavaScript code.
+let check = document.getElementById('darkmode-toggle');
+let body = document.getElementsByTagName('body')[0];
+
+if (localStorage.theme == "dark") {
+    check.checked = true;
+}
+setTheme(localStorage.getItem("theme"));
+
+function setTheme(theme) {
+    body.setAttribute('data-bs-theme', theme);
+}
+
+function changeTheme() {
+    if (check.checked) {
+        setTheme('dark');
+        localStorage.theme = "dark";
+    } else {
+        setTheme('light');
+        localStorage.theme = "light";
+    }
+}
+
+check.addEventListener('click', changeTheme);

@@ -1,0 +1,23 @@
+﻿@model NewsAgregator.Mvc.Models.Users.UserCreateModel
+<form asp-controller="Admin" asp-action="CreateUser" method="post">
+    <div class="mb-3">
+        <label class="form-label" asp-for="Login"></label>
+        <input class="form-control" type="text" asp-for="Login" />
+        <span asp-validation-for="Login"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Name"></label>
+        <input class="form-control" type="text" asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" asp-for="Email"></label>
+        <input class="form-control" type="email" asp-for="Email" />
+        <span asp-validation-for="Email"></span>
+    </div><div class="mb-3">
+        <label class="form-label" asp-for="Password"></label>
+        <input class="form-control" type="password" asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
