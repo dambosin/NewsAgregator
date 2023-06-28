@@ -68,6 +68,5 @@ namespace NewsAgregator.Abstractions.Services
         /// <param name="expression">Filter expression</param>
         /// <returns>List collection of ArticleDto</returns>
         List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression);
-        Task Refactor();
     }
 }

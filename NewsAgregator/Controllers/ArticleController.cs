@@ -125,11 +125,6 @@ namespace NewsAgregator.Mvc.Controllers
             await _articleService.RateArticlesAsync();
             return RedirectToAction("Index");
         }
-        [HttpPost]
-        public async Task<IActionResult> RefactorArticle()
-        {
-            await _articleService.Refactor();
-            return RedirectToAction("Index");
-        }
+
     }
 }

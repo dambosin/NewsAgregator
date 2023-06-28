@@ -11,6 +11,7 @@ namespace NewsAgregator.Data.Cqs.QueriesHandlers.Article
         private readonly NewsAgregatorContext _context;
         private readonly IMapper _mapper;
 
+
         public GetArticlesByPageQueryHandler(
             NewsAgregatorContext context,
             IMapper mapper)

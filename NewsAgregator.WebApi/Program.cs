@@ -75,11 +75,13 @@ namespace NewsAgregator.WebApi
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-            builder.Services.AddTransient<IArticleService, ArticleSrvice>();
+            builder.Services.AddTransient<IArticleService, ArticleService>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IRoleService, RoleService>();
+            builder.Services.AddTransient<IRateService, RateService>();
+            
 
             builder.Services.AddAutoMapper(typeof(Program));
 

@@ -9,9 +9,6 @@
             <form class="col-auto" asp-controller="Article" asp-action="RateArticles" method="post">
                 <button type="submit" class="btn btn-primary col-auto">Rate</button>
             </form>
-            <form class="col-auto" asp-controller="Article" asp-action="RefactorArticle" method="post">
-                <button type="submit" class="btn btn-primary col-auto">Refactor</button>
-            </form>
         </div>
         <div class="row">
             @{
@@ -41,3 +38,6 @@
         </nav>
     </div>
 </div>
+@section Styles{
+    <link rel="stylesheet" href="~/css/articleCard.css" asp-append-version="true" />
+}

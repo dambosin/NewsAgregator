@@ -23,7 +23,7 @@ namespace NewsAggregator.Buisness.Tests
         private readonly Mock<IRateService> _rateService = new();
         private IArticleService CreateArticleService()
         {   
-            return new ArticleSrvice(
+            return new ArticleService(
                 _unitOfWork.Object,
                 _mapper.Object,
                 _logger.Object,

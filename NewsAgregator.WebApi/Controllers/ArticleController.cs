@@ -2,6 +2,7 @@ using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NewsAgregator.Data.Cqs.Commands.Article;
 using NewsAgregator.Data.Cqs.QueriesHandlers.Article;
 using NewsAgregator.Data.Cqs.Queris.Article;
 using NewsAgregator.WebApi.Requests;
@@ -71,6 +72,31 @@ namespace NewsAgregator.WebApi.Controllers
         {
             var response = await GetArticlesCountAsync();
             return Ok(response);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> LoadAticles([FromQuery]string SourceName)
+        {
+            await _mediator.Send(new LoadArticlesCommand() 
+            {
+                SourceName = SourceName 
+            });
+            return Ok();
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(typeof(ErrorResponse), StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RateArticles()
+        {
+            await _mediator.Send(new RateArticlesCommand());
+            return Ok();
         }
 
         private async Task<int> GetArticlesCountAsync()

@@ -7,7 +7,7 @@
             <h5 class="card-title"><a class="text-decoration-none" asp-action="Detail" asp-controller="Article" asp-route-id="@Model.Id">@Model.Title</a></h5>
             <p class="card-text">@Html.Raw(Model.ShortDescription)</p>
             <p class="card-text"><small class="text-muted">@Model.PositiveIndex rate</small></p>
-            <a asp-action="Detail" asp-controller="Article" class="btn btn-primary" asp-route-id="@Model.Id">Explore</a>
+            <a asp-action="Detail" asp-controller="Article" class="visually-hidde stretched-link" asp-route-id="@Model.Id"></a>
         </div>
     </div>
 </div>

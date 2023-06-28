@@ -1,68 +1,58 @@
 ﻿using HtmlAgilityPack;
 using NewsAgregator.Abstractions;
 using NewsAgregator.Core.Dto;
-using NUnit.Framework.Internal;
 using System.ServiceModel.Syndication;
 using System.Xml;
+using Serilog;
 
 namespace NewsAgregator.Buisness.Parsers
 {
     public class DtfParseer : ISiteParser
     {
+        private readonly ILogger _logger;
+
+        public DtfParseer(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public List<ArticleDto> Parse(SourceDto source)
         {
-            var articles = new List<ArticleDto>();
-            using(var reader = XmlReader.Create(source.RssUrl))
-            {
-                var feed = SyndicationFeed.Load(reader);
-                foreach(var item in feed.Items)
+            try{
+                var articles = new List<ArticleDto>();
+                using (var reader = XmlReader.Create(source.RssUrl))
                 {
-                    var idOnSite = item.Id;
-                    var urlHeader = item.Summary.Text[item.Summary.Text.IndexOf("src=\"")..item.Summary.Text.IndexOf("\" width")][5..];
-                    var title = item.Title.Text;
-                    var shortDescription = item.Summary.Text[..item.Summary.Text.IndexOf('<')].Trim();
-                    var doc = new HtmlWeb().Load(item.Links[0].Uri);
-                    var content = HandleContent(doc.DocumentNode.SelectSingleNode("//div[contains(concat(\" \",normalize-space(@class),\" \"),\" content--full \")]"), item.Links); 
-                    var plainText = "";
-                    foreach(var node in content.ChildNodes)
+                    var feed = SyndicationFeed.Load(reader);
+                    foreach (var item in feed.Items)
                     {
-                        switch (node.Name)
+                        var idOnSite = item.Id;
+                        var urlHeader = item.Summary.Text[item.Summary.Text.IndexOf("src=\"")..item.Summary.Text.IndexOf("\" width")][5..];
+                        var title = item.Title.Text;
+                        var shortDescription = item.Summary.Text[..item.Summary.Text.IndexOf('<')].Trim();
+                        var doc = new HtmlWeb().Load(item.Links[0].Uri);
+                        var content = HandleContent(doc.DocumentNode.SelectSingleNode("//div[contains(concat(\" \",normalize-space(@class),\" \"),\" content--full \")]"), item.Links);
+                        var plainText = "";
+                        foreach (var node in content.SelectNodes(".//p|.//li|.//h4"))
                         {
-                            case "img":
-                                node.AddClass("col-md-12 col-xl-11 rounded");
-                                break;
-                            case "p":
-                                node.AddClass("col-sm-12 col-md-11 col-xl-10");
-                                break;
-                            case "a":
-                                node.AddClass("link-info link-underline-opacity-25 link-underline-opacity-100-hover");
-                                break;
-                            case "div":
-                                node.AddClass("row mb-3 justify-content-center");
-                                break;
-                            case "iframe":
-                                node.AddClass("ratio ratio-16x9");
-                                break;
-                            default:
-                                break;
+                            plainText += node.InnerText.Trim() + " ";
                         }
+                        articles.Add(new ArticleDto()
+                        {
+                            IdOnSite = idOnSite,
+                            UrlHeader = urlHeader,
+                            Title = title,
+                            ShortDescription = shortDescription,
+                            Content = content.InnerHtml,
+                            PlainText = plainText,
+                            SourceId = source.Id
+                        });
                     }
-                    foreach(var node in content.SelectNodes(".//p|.//li"))
-                    {
-                        plainText += node.InnerText.Trim() + " ";
-                    }
-                    articles.Add(new ArticleDto()
-                    {
-                        IdOnSite = idOnSite,
-                        UrlHeader = urlHeader,
-                        Title = title,
-                        ShortDescription = shortDescription,
-                        Content = content.InnerHtml,
-                        PlainText = plainText,
-                        SourceId = source.Id
-                    });
-                }
+                };
                 return articles;
+            }catch(HttpRequestException ex)
+            {
+                _logger.Error(ex.Message, ex);
+                return new List<ArticleDto>();
             }
         }
         private static HtmlNode HandleContent(HtmlNode parentNode, System.Collections.ObjectModel.Collection<SyndicationLink> links) 
@@ -90,13 +80,13 @@ namespace NewsAgregator.Buisness.Parsers
                     case "figure":
                         if (currentNode.Attributes["class"] != null && currentNode.Attributes["class"].Value.Contains("figure-image"))
                         {
-                            var newNode = HtmlNode.CreateNode($"<div><img src=\"{links[currentImage + 1].Uri}\"></div>");
+                            var newNode = HtmlNode.CreateNode($"<img src=\"{links[currentImage + 1].Uri}\">");
                             content.AppendChild(newNode);
                             currentImage++;
                         }
                         else if (currentNode.Attributes["class"] != null && currentNode.Attributes["class"].Value.Contains("figure-video"))
                         {
-                            var newNode = HtmlNode.CreateNode($"<div class=\"ratio ratio-16x9\"><iframe src=\"{links[currentImage + 1].Uri}\"></div>");
+                            var newNode = HtmlNode.CreateNode($"<div class=\"ratio ratio-16x9\">\r\n<iframe src=\"{links[currentImage + 1].Uri}\" allowfull>\r\n</div>");
                             content.AppendChild(newNode);
                             currentImage++;
                         }
@@ -110,8 +100,8 @@ namespace NewsAgregator.Buisness.Parsers
                             {
                                 text += node2.InnerText;
                             }
-                            text += "\" " + currentNode.LastChild.InnerText.Trim();
-                            var newNode = HtmlNode.CreateNode($"<p>{text}</p>");
+                            text += "\" ";
+                            var newNode = HtmlNode.CreateNode($"<blockquote>\r\n<p>{text}</p>\r\n<p class=\"text-end\">{currentNode.LastChild.InnerText.Trim()}</p>\r\n</blockquote>");
                             content.AppendChild(newNode);
                         }
                         else if (currentNode.SelectSingleNode(".//div[@class=\"content content--embed\"]") != null)
@@ -132,6 +122,18 @@ namespace NewsAgregator.Buisness.Parsers
                             var newNode = HtmlNode.CreateNode($"<p>\"{text}\" {user}</p>");
                             content.AppendChild(newNode);
                         }
+                        else if (currentNode.HasClass("figure-gallery"))
+                        {
+                            var divs = currentNode.SelectNodes(".//div[@data-index]");
+                            foreach( var div in divs )
+                            {
+                                var style = div.Attributes["style"].Value;
+                                var link = style[(style.IndexOf('(') + 1)..style.IndexOf(')')];
+                                var newNode = HtmlNode.CreateNode($"<img src=\"{link}\"");
+                                content.AppendChild(newNode);
+                            }
+
+                        }
                         else
                         {
                             throw new NotImplementedException();
@@ -141,7 +143,7 @@ namespace NewsAgregator.Buisness.Parsers
                         break;
                     case "h2":
                         {
-                            var newNode = HtmlNode.CreateNode($"<p>{currentNode.FirstChild.InnerText}</p>");
+                            var newNode = HtmlNode.CreateNode($"<h4>{currentNode.FirstChild.InnerText}</h4>");
                             content.AppendChild(newNode);
                         }
                         break;

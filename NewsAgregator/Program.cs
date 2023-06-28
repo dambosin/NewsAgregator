@@ -1,3 +1,4 @@
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NewsAgregator.Abstractions;
@@ -53,7 +54,7 @@ namespace NewsAgregator
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             
-            builder.Services.AddTransient<IArticleService, ArticleSrvice>();
+            builder.Services.AddTransient<IArticleService, ArticleService>();
             builder.Services.AddTransient<ISourceService, SourceService>();
             builder.Services.AddTransient<ICommentService, CommentService>();
             builder.Services.AddTransient<IUserService, UserService>();
@@ -61,6 +62,15 @@ namespace NewsAgregator
             builder.Services.AddTransient<IRateService, RateService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddHangfire(config => config
+               .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+               .UseSimpleAssemblyNameTypeSerializer()
+               .UseRecommendedSerializerSettings()
+               .UseSqlServerStorage(configuration.GetConnectionString("DefaultConnection")));
+
+            // Add the processing server as IHostedService
+            builder.Services.AddHangfireServer();
 
             builder.Services.AddControllersWithViews();
 
@@ -80,6 +90,7 @@ namespace NewsAgregator
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
+                app.UseHangfireDashboard();
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -93,7 +104,7 @@ namespace NewsAgregator
             app.UseAuthentication();
             app.UseAuthorization();
 
-
+            app.MapHangfireDashboard("/hangfire");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

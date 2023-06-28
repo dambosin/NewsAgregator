@@ -1,6 +1,4 @@
 ﻿using AutoMapper;
-using HtmlAgilityPack;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.Extensions.Configuration;
 using NewsAgregator.Abstractions;
 using NewsAgregator.Abstractions.Repository;
@@ -8,10 +6,7 @@ using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
 using NewsAgregator.Data.Entities;
 using Serilog;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Security;
-using System.Text.RegularExpressions;
 
 namespace NewsAgregator.Buisness.Services
 {
@@ -19,7 +14,7 @@ namespace NewsAgregator.Buisness.Services
     //todo: throw argumeentNullException when argumeent in constructor is null
     //todo: admin report handler page
     //todo: article filter
-    public class ArticleSrvice : IArticleService
+    public class ArticleService : IArticleService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -29,7 +24,7 @@ namespace NewsAgregator.Buisness.Services
         private readonly ISourceService _sourceService;
         private readonly IRateService _rateService;
 
-        public ArticleSrvice(
+        public ArticleService(
             IUnitOfWork unitOfWork,
             IMapper mapper,
             ILogger logger,
@@ -60,7 +55,6 @@ namespace NewsAgregator.Buisness.Services
             var maxPage = Math.Ceiling(articles.Count() / (double)pageSize);
             if (maxPage < pageNumber) 
                 throw new ArgumentOutOfRangeException($"Page number must be same or lower than last pagee. pageNumber = {pageNumber}, last page = {maxPage}");
-            
             return articles
                 .OrderByDescending(article => article.Created)
                 .Skip((pageNumber - 1) * pageSize)
