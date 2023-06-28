@@ -198,7 +198,7 @@ namespace NewsAgregator.Buisness.Parsers
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            break;
                         }
                         break;
                     case "a":
@@ -208,19 +208,23 @@ namespace NewsAgregator.Buisness.Parsers
                         }
                         else
                         {
-                            throw new NotImplementedException();
+                            break;
                         }
                     case "blockquote":
-                        if (currentNode.HasClass("instagram-media"))
+                        if (!currentNode.HasClass("instagram-media"))
                         {
-                            break;
-                        }else if (!currentNode.HasAttributes)
-                        {
-                            var newNode = HtmlNode.CreateNode($"<p>{currentNode.InnerHtml}</p>");
-                            content.AppendChild(newNode);
+                            if (!currentNode.HasAttributes)
+                            {
+                                var newNode = HtmlNode.CreateNode($"<p>{currentNode.InnerHtml}</p>");
+                                content.AppendChild(newNode);
+                                break;
+                            }
                             break;
                         }
-                        throw new NotImplementedException();
+                        else
+                        {
+                            break;
+                        }
                     case "ul":
                         {
                             var newNode = HtmlNode.CreateNode($"<ul>{currentNode.InnerHtml}</ul>");
@@ -230,6 +234,7 @@ namespace NewsAgregator.Buisness.Parsers
                     case "script":
                     case "hr":
                     case "h6":
+                    case "h3":
                         break;
                     case "h2":
                         if (currentNode.FirstChild != null && currentNode.FirstChild.Name.Equals("strong"))
@@ -244,7 +249,7 @@ namespace NewsAgregator.Buisness.Parsers
                         }
                         break;
                     default:
-                        throw new NotImplementedException();
+                        break;
                 }
                 currentNode = currentNode.NextSibling;
             }

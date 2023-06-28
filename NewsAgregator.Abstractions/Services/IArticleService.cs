@@ -25,12 +25,6 @@ namespace NewsAgregator.Abstractions.Services
         /// <returns>Task of ArticleDto</returns>
         Task<ArticleDto> GetArticleAsync(Guid id);
         /// <summary>
-        /// Post an article to database
-        /// </summary>
-        /// <param name="article">Article to post</param>
-        /// <returns>Id of posted article</returns>
-        Task<Guid> CreateAsync(ArticleDto article);
-        /// <summary>
         /// Removes article from database
         /// </summary>
         /// <param name="id">Id of article to remove</param>
@@ -68,5 +62,6 @@ namespace NewsAgregator.Abstractions.Services
         /// <param name="expression">Filter expression</param>
         /// <returns>List collection of ArticleDto</returns>
         List<ArticleDto> GetByPageWithFilter(int page, int pageSize, Expression<Func<Article, bool>> expression);
+        List<ArticleDto> GetTopArticles(int count);
     }
 }

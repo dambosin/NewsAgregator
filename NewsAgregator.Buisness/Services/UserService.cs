@@ -79,12 +79,12 @@ namespace NewsAgregator.Buisness.Services
             if (IsUserExistByEmail(user.Email))
                 throw new InvalidDataException($"User with email : {user.Email} already exist.");
             user.PasswordHash = GetPasswordHash(user.Password);
+            var newUser = await _unitOfWork.Users.AddAsync(_mapper.Map<User>(user));
             var userRole = new UserRoleDto
             {
-                UserId = user.Id,
+                UserId = newUser.Entity.Id,
                 RoleId = _unitOfWork.Roles.FindBy(role => role.Name.Equals("User")).First().Id
             };
-            await _unitOfWork.Users.AddAsync(_mapper.Map<User>(user));
             await _unitOfWork.UserRoles.AddAsync(_mapper.Map<UserRole>(userRole));
             await _unitOfWork.CommitAsync();
             return user.Id;
@@ -127,6 +127,12 @@ namespace NewsAgregator.Buisness.Services
         public List<UserDto> GetUsers()
         {
             return _unitOfWork.Users.GetAsQueryable().Select(user => _mapper.Map<UserDto>(user)).ToList();
+        }
+
+        public async Task DeleteAsync(string login)
+        {
+            await _unitOfWork.Users.RemoveAsync(GetUserByLogin(login).Id);
+            await _unitOfWork.CommitAsync();
         }
     }
 }

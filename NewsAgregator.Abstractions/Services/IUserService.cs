@@ -54,5 +54,6 @@ namespace NewsAgregator.Abstractions.Services
         /// <param name="passwordHash">Password hash to confirm</param>
         /// <returns>True if correct</returns>
         bool IsPasswordCorrect(string password, string passwordHash);
+        Task DeleteAsync(string login);
     }
 }

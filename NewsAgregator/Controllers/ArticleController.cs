@@ -84,35 +84,6 @@ namespace NewsAgregator.Mvc.Controllers
             }
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            var viewModel = new ArticleCreateModel
-            {
-                AvailiableSources = _sourceSrvice
-                    .GetSources()
-                    .Select(source =>
-                        new SelectListItem
-                        {
-                            Value = source.Id.ToString(),
-                            Text = source.Name
-                        })
-                    .ToList()
-            };
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(ArticleCreateModel article)
-        {
-            var articleCreate = _mapper.Map<ArticleDto>(article);
-            if (ModelState.IsValid)
-            {
-                await _articleService.CreateAsync(articleCreate);
-            }
-
-            return RedirectToAction("Detail", new { id = articleCreate.Id });
-        }
         [HttpPost]
         public async Task<IActionResult> LoadArticles()
         {

@@ -7,6 +7,7 @@ using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Buisness.Parsers;
 using NewsAgregator.Buisness.Services;
 using NewsAgregator.Data;
+using NewsAgregator.Data.Cqs.QueriesHandlers.Article;
 using NewsAgregator.Data.Entities;
 using NewsAgregator.Repository;
 using NewsAgregator.Repository.Implemintation;
@@ -35,6 +36,7 @@ namespace NewsAgregator
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
             builder.Host.UseSerilog();
+            builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<GetArticlesByPageQueryHandler>());
 
             builder.Services.AddSingleton<Serilog.ILogger>(Log.Logger);
 
@@ -60,6 +62,7 @@ namespace NewsAgregator
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IRoleService, RoleService>();
             builder.Services.AddTransient<IRateService, RateService>();
+            builder.Services.AddTransient<IHangfireService, HangfireService>();
 
             builder.Services.AddAutoMapper(typeof(Program));
 

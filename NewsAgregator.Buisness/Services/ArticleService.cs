@@ -71,13 +71,6 @@ namespace NewsAgregator.Buisness.Services
                 throw new ArgumentException($"Article with id = {id} doesn't exist");
             return _mapper.Map<ArticleDto>(article);
         }
-
-        public async Task<Guid> CreateAsync(ArticleDto article)
-        {
-            await _unitOfWork.Articles.AddAsync(_mapper.Map<Article>(article));
-            await _unitOfWork.CommitAsync();
-            return article.Id;
-        }
         public Task RemoveAsync(Guid id)
         {
             throw new NotImplementedException();
@@ -134,5 +127,15 @@ namespace NewsAgregator.Buisness.Services
         {
             return _unitOfWork.Articles.GetAsQueryable().Select(article => article.IdOnSite).ToList();
         }
+
+        public List<ArticleDto> GetTopArticles(int count)
+        {
+            return _unitOfWork.Articles
+                .GetAsQueryable()
+                .OrderByDescending(article => article.PositiveIndex)
+                .Take(count)
+                .Select(article => _mapper.Map<ArticleDto>(article)).ToList();
+        }
+
     }
 }

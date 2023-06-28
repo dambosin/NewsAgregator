@@ -81,6 +81,7 @@ namespace NewsAgregator.WebApi
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IRoleService, RoleService>();
             builder.Services.AddTransient<IRateService, RateService>();
+            builder.Services.AddTransient<IHangfireService, HangfireService>();
             
 
             builder.Services.AddAutoMapper(typeof(Program));

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NewsAgregator.Abstractions.Services;
 using NewsAgregator.Core.Dto;
+using NewsAgregator.Mvc.Models.Accounts;
 using NewsAgregator.Mvc.Models.Roles;
 using NewsAgregator.Mvc.Models.Users;
 
@@ -53,6 +54,44 @@ namespace NewsAgregator.Mvc.Controllers
             {
                 var model = new UsersViewModel { Users = _userService.GetUsers()};
                 return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromForm]RegisterModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    throw new InvalidDataException("Model is not correct");
+                }
+                await _userService.RegisterUserAsync(_mapper.Map<UserDto>(model));
+                return RedirectToAction("ManageUsers");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> RemoveUser([FromRoute] string login)
+        {
+            try
+            {
+                var role = _userService.GetUserByLogin(login) ?? throw new InvalidDataException($"User with login {login} is not exist");
+                await _userService.DeleteAsync(login);
+                return RedirectToAction("ManageUsers");
             }
             catch (Exception ex)
             {
